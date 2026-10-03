@@ -3,12 +3,16 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\TechnologyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/projects', [PublicProjectController::class, 'index'])->name('projects.index');
+Route::get('/projects/{project}', [PublicProjectController::class, 'show'])->name('projects.show');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

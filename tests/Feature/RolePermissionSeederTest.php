@@ -20,9 +20,9 @@ test('the seeder creates exactly the defined permissions and roles', function ()
 test('the seeder can be run repeatedly without duplicating records', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $this->assertDatabaseCount('permissions', 24);
+    $this->assertDatabaseCount('permissions', 32);
     $this->assertDatabaseCount('roles', 3);
-    $this->assertDatabaseCount('role_has_permissions', 24 + 12 + 3);
+    $this->assertDatabaseCount('role_has_permissions', 32 + 20 + 3);
 });
 
 test('admin is granted every permission', function () {
@@ -42,6 +42,8 @@ test('admin can manage everything', function (string $permission) {
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
+    'categories.create', 'categories.update', 'categories.delete',
+    'technologies.create', 'technologies.update', 'technologies.delete',
     'users.create', 'users.update', 'users.delete',
     'roles.create', 'roles.update', 'roles.delete',
     'permissions.create', 'permissions.update', 'permissions.delete',
@@ -58,6 +60,8 @@ test('author can manage content', function (string $permission) {
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
+    'categories.view', 'categories.create', 'categories.update', 'categories.delete',
+    'technologies.view', 'technologies.create', 'technologies.update', 'technologies.delete',
 ]);
 
 test('author cannot manage users, roles, or permissions', function (string $permission) {
@@ -91,6 +95,8 @@ test('user cannot modify content', function (string $permission) {
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
+    'categories.create', 'categories.update', 'categories.delete',
+    'technologies.create', 'technologies.update', 'technologies.delete',
 ]);
 
 test('user without a role has no permissions', function () {

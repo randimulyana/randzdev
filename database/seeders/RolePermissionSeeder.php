@@ -30,6 +30,16 @@ class RolePermissionSeeder extends Seeder
         'lessons.update',
         'lessons.delete',
 
+        'categories.view',
+        'categories.create',
+        'categories.update',
+        'categories.delete',
+
+        'technologies.view',
+        'technologies.create',
+        'technologies.update',
+        'technologies.delete',
+
         'users.view',
         'users.create',
         'users.update',
@@ -66,6 +76,16 @@ class RolePermissionSeeder extends Seeder
         'lessons.create',
         'lessons.update',
         'lessons.delete',
+
+        'categories.view',
+        'categories.create',
+        'categories.update',
+        'categories.delete',
+
+        'technologies.view',
+        'technologies.create',
+        'technologies.update',
+        'technologies.delete',
     ];
 
     /**

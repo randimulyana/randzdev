@@ -40,4 +40,12 @@ class Category extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    /**
+     * Get the posts in this category.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
 }

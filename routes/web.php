@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicProjectController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +30,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('technologies', TechnologyController::class)->except('show');
     Route::resource('projects', ProjectController::class)->except('show');
+    Route::resource('tags', TagController::class)->except('show');
+    Route::resource('posts', PostController::class)->except('show');
 });
 
 require __DIR__.'/auth.php';

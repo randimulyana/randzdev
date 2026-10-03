@@ -40,6 +40,11 @@ class RolePermissionSeeder extends Seeder
         'technologies.update',
         'technologies.delete',
 
+        'tags.view',
+        'tags.create',
+        'tags.update',
+        'tags.delete',
+
         'users.view',
         'users.create',
         'users.update',
@@ -86,6 +91,11 @@ class RolePermissionSeeder extends Seeder
         'technologies.create',
         'technologies.update',
         'technologies.delete',
+
+        'tags.view',
+        'tags.create',
+        'tags.update',
+        'tags.delete',
     ];
 
     /**

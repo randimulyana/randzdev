@@ -20,9 +20,9 @@ test('the seeder creates exactly the defined permissions and roles', function ()
 test('the seeder can be run repeatedly without duplicating records', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $this->assertDatabaseCount('permissions', 32);
+    $this->assertDatabaseCount('permissions', 36);
     $this->assertDatabaseCount('roles', 3);
-    $this->assertDatabaseCount('role_has_permissions', 32 + 20 + 3);
+    $this->assertDatabaseCount('role_has_permissions', 36 + 24 + 3);
 });
 
 test('admin is granted every permission', function () {
@@ -44,6 +44,7 @@ test('admin can manage everything', function (string $permission) {
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.create', 'categories.update', 'categories.delete',
     'technologies.create', 'technologies.update', 'technologies.delete',
+    'tags.create', 'tags.update', 'tags.delete',
     'users.create', 'users.update', 'users.delete',
     'roles.create', 'roles.update', 'roles.delete',
     'permissions.create', 'permissions.update', 'permissions.delete',
@@ -62,6 +63,7 @@ test('author can manage content', function (string $permission) {
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.view', 'categories.create', 'categories.update', 'categories.delete',
     'technologies.view', 'technologies.create', 'technologies.update', 'technologies.delete',
+    'tags.view', 'tags.create', 'tags.update', 'tags.delete',
 ]);
 
 test('author cannot manage users, roles, or permissions', function (string $permission) {
@@ -97,6 +99,7 @@ test('user cannot modify content', function (string $permission) {
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.create', 'categories.update', 'categories.delete',
     'technologies.create', 'technologies.update', 'technologies.delete',
+    'tags.create', 'tags.update', 'tags.delete',
 ]);
 
 test('user without a role has no permissions', function () {

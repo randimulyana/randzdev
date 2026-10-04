@@ -30,6 +30,10 @@
                                class="transition {{ request()->routeIs('projects.*') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-gray-900' }}">
                                 {{ __('Projects') }}
                             </a>
+                            <a href="{{ route('blog.index') }}"
+                               class="transition {{ request()->routeIs('blog.*') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-gray-900' }}">
+                                {{ __('Blog') }}
+                            </a>
                         </nav>
                     </div>
 

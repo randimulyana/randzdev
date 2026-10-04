@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\LearningPathController;
@@ -33,6 +34,10 @@ Route::get('/contact', [PublicContactController::class, 'show'])->name('contact'
 Route::post('/contact', [PublicContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
 Route::get('/dashboard', function () {
+    if (auth()->user()?->hasRole('admin')) {
+        return redirect()->route('admin.dashboard');
+    }
+
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -43,6 +48,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('technologies', TechnologyController::class)->except('show');
     Route::resource('projects', ProjectController::class)->except('show');

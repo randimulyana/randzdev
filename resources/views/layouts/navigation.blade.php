@@ -5,20 +5,56 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ Auth::user()?->hasRole('admin') ? route('admin.dashboard') : route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @if (Auth::user()?->hasRole('admin'))
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Admin Dashboard') }}
+                        </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    @endif
+
+                    @can('viewAny', App\Models\Post::class)
+                        <x-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
+                            {{ __('Posts') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('viewAny', App\Models\Project::class)
+                        <x-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
+                            {{ __('Projects') }}
+                        </x-nav-link>
+                    @endcan
 
                     @can('viewAny', App\Models\LearningPath::class)
                         <x-nav-link :href="route('admin.learning-paths.index')" :active="request()->routeIs('admin.learning-paths.*')">
                             {{ __('Learning Paths') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('viewAny', App\Models\Category::class)
+                        <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                            {{ __('Categories') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('viewAny', App\Models\Technology::class)
+                        <x-nav-link :href="route('admin.technologies.index')" :active="request()->routeIs('admin.technologies.*')">
+                            {{ __('Technologies') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @can('viewAny', App\Models\Tag::class)
+                        <x-nav-link :href="route('admin.tags.index')" :active="request()->routeIs('admin.tags.*')">
+                            {{ __('Tags') }}
                         </x-nav-link>
                     @endcan
 
@@ -79,13 +115,49 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            @if (Auth::user()?->hasRole('admin'))
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Admin Dashboard') }}
+                </x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+            @endif
+
+            @can('viewAny', App\Models\Post::class)
+                <x-responsive-nav-link :href="route('admin.posts.index')" :active="request()->routeIs('admin.posts.*')">
+                    {{ __('Posts') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\Project::class)
+                <x-responsive-nav-link :href="route('admin.projects.index')" :active="request()->routeIs('admin.projects.*')">
+                    {{ __('Projects') }}
+                </x-responsive-nav-link>
+            @endcan
 
             @can('viewAny', App\Models\LearningPath::class)
                 <x-responsive-nav-link :href="route('admin.learning-paths.index')" :active="request()->routeIs('admin.learning-paths.*')">
                     {{ __('Learning Paths') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\Category::class)
+                <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                    {{ __('Categories') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\Technology::class)
+                <x-responsive-nav-link :href="route('admin.technologies.index')" :active="request()->routeIs('admin.technologies.*')">
+                    {{ __('Technologies') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\Tag::class)
+                <x-responsive-nav-link :href="route('admin.tags.index')" :active="request()->routeIs('admin.tags.*')">
+                    {{ __('Tags') }}
                 </x-responsive-nav-link>
             @endcan
 

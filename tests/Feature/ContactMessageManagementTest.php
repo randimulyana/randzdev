@@ -125,9 +125,13 @@ test('viewing an already read message preserves existing read_at timestamp', fun
 });
 
 test('dashboard displays contact messages link for authorized admin', function () {
-    $response = $this->actingAs($this->admin)->get(route('dashboard'));
+    $this->actingAs($this->admin)
+        ->get(route('dashboard'))
+        ->assertRedirect(route('admin.dashboard'));
 
-    $response->assertOk()
+    $this->actingAs($this->admin)
+        ->get(route('admin.dashboard'))
+        ->assertOk()
         ->assertSee(route('admin.contact-messages.index'))
         ->assertSee('Contact Messages');
 });

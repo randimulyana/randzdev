@@ -4,6 +4,7 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 test('guest can access public blog listing', function () {
     $response = $this->get(route('blog.index'));
@@ -309,4 +310,117 @@ test('category filter returns empty state when no posts match', function () {
 
     $response->assertOk()
         ->assertSee('No articles found');
+});
+
+test('all five content types are rendered with proper formatting on public blog', function (string $type, string $expectedLabel) {
+    $post = Post::factory()->create([
+        'title' => 'Post About '.$type,
+        'slug' => 'post-about-'.str_replace('_', '-', $type),
+        'type' => $type,
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    // Test on index
+    $indexResponse = $this->get(route('blog.index'));
+    $indexResponse->assertOk()
+        ->assertSee($expectedLabel);
+
+    // Test on show
+    $showResponse = $this->get(route('blog.show', $post));
+    $showResponse->assertOk()
+        ->assertSee($expectedLabel);
+})->with([
+    ['article', 'Article'],
+    ['tutorial', 'Tutorial'],
+    ['note', 'Note'],
+    ['guide', 'Guide'],
+    ['case_study', 'Case study'],
+]);
+
+test('custom SEO metadata is rendered when provided', function () {
+    $post = Post::factory()->create([
+        'title' => 'Original Post Title',
+        'slug' => 'seo-optimized-post',
+        'meta_title' => 'Custom Meta Title for Search Engines',
+        'meta_description' => 'A custom description crafted specifically for search engine results pages.',
+        'canonical_url' => 'https://randz.dev/blog/canonical-override',
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $response = $this->get(route('blog.show', $post));
+
+    $response->assertOk()
+        ->assertSee('<title>Custom Meta Title for Search Engines — ', false)
+        ->assertSee('<meta name="description" content="A custom description crafted specifically for search engine results pages.">', false)
+        ->assertSee('<link rel="canonical" href="https://randz.dev/blog/canonical-override">', false);
+});
+
+test('SEO metadata falls back gracefully when fields are null', function () {
+    $post = Post::factory()->create([
+        'title' => 'Fallback SEO Post',
+        'slug' => 'fallback-seo-post',
+        'excerpt' => 'This is the author excerpt for the post.',
+        'content' => '<p>Paragraph with <strong>HTML</strong> tags that must be stripped before truncating into a meta description.</p>',
+        'meta_title' => null,
+        'meta_description' => null,
+        'canonical_url' => null,
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $response = $this->get(route('blog.show', $post));
+
+    $response->assertOk()
+        ->assertSee('<title>Fallback SEO Post — ', false)
+        ->assertSee('<meta name="description" content="This is the author excerpt for the post.">', false)
+        ->assertSee('<link rel="canonical" href="'.route('blog.show', $post).'">', false);
+});
+
+test('meta description falls back to stripped content when excerpt is null', function () {
+    $rawContent = 'This is content with <em>formatting</em> and no excerpt provided. '.str_repeat('Extra text for length. ', 10);
+    $strippedExpected = Str::limit(strip_tags($rawContent), 160);
+
+    $post = Post::factory()->create([
+        'title' => 'No Excerpt Post',
+        'slug' => 'no-excerpt-post',
+        'excerpt' => null,
+        'content' => $rawContent,
+        'meta_title' => null,
+        'meta_description' => null,
+        'canonical_url' => null,
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $response = $this->get(route('blog.show', $post));
+
+    $response->assertOk()
+        ->assertSee('<meta name="description" content="'.e($strippedExpected).'">', false);
+});
+
+test('active category and tag filters display human-readable names instead of raw slugs', function () {
+    $category = Category::factory()->create(['name' => 'Web Development', 'slug' => 'web-development']);
+    $tag = Tag::factory()->create(['name' => 'Clean Code', 'slug' => 'clean-code']);
+
+    $post = Post::factory()->create([
+        'title' => 'Clean Architecture Principles',
+        'slug' => 'clean-architecture-principles',
+        'category_id' => $category->id,
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+    $post->tags()->attach($tag);
+
+    $response = $this->get(route('blog.index', [
+        'category' => 'web-development',
+        'tag' => 'clean-code',
+    ]));
+
+    $response->assertOk()
+        ->assertSee('Category: Web Development')
+        ->assertSee('Tag: #Clean Code')
+        ->assertDontSee('Category: web-development')
+        ->assertDontSee('Tag: #clean-code');
 });

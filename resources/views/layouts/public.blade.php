@@ -7,6 +7,14 @@
 
         <title>{{ isset($title) ? $title . ' — ' . config('app.name', 'Randz.dev') : config('app.name', 'Randz.dev') . ' — Portfolio' }}</title>
 
+        @if (! empty($metaDescription))
+            <meta name="description" content="{{ $metaDescription }}">
+        @endif
+
+        @if (! empty($canonicalUrl))
+            <link rel="canonical" href="{{ $canonicalUrl }}">
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />

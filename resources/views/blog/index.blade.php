@@ -55,12 +55,12 @@
                     <span class="text-xs text-gray-500">{{ __('Active filter:') }}</span>
                     @if ($currentCategory)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            {{ __('Category:') }} {{ $currentCategory }}
+                            {{ __('Category:') }} {{ $categories->firstWhere('slug', $currentCategory)?->name ?? $currentCategory }}
                         </span>
                     @endif
                     @if ($currentTag)
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-200">
-                            {{ __('Tag:') }} #{{ $currentTag }}
+                            {{ __('Tag:') }} #{{ $tags->firstWhere('slug', $currentTag)?->name ?? $currentTag }}
                         </span>
                     @endif
                     <a href="{{ route('blog.index') }}" class="text-xs font-semibold text-red-600 hover:text-red-800 ml-2">

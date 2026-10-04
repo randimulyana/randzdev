@@ -1,7 +1,15 @@
 <x-public-layout>
     <x-slot:title>
-        {{ $post->title }}
+        {{ $post->meta_title ?: $post->title }}
     </x-slot:title>
+
+    <x-slot:metaDescription>
+        {{ $post->meta_description ?: ($post->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($post->content), 160)) }}
+    </x-slot:metaDescription>
+
+    <x-slot:canonicalUrl>
+        {{ $post->canonical_url ?: route('blog.show', $post) }}
+    </x-slot:canonicalUrl>
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">

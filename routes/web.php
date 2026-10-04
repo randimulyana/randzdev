@@ -7,15 +7,15 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicBlogController;
+use App\Http\Controllers\PublicHomeController;
 use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [PublicHomeController::class, 'index'])->name('home');
+Route::get('/about', [PublicHomeController::class, 'about'])->name('about');
 
 Route::get('/projects', [PublicProjectController::class, 'index'])->name('projects.index');
 Route::get('/projects/{project}', [PublicProjectController::class, 'show'])->name('projects.show');

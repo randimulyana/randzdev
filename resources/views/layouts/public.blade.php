@@ -34,6 +34,14 @@
                         </a>
 
                         <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                            <a href="{{ route('home') }}"
+                               class="transition {{ request()->routeIs('home') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-gray-900' }}">
+                                {{ __('Home') }}
+                            </a>
+                            <a href="{{ route('about') }}"
+                               class="transition {{ request()->routeIs('about') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-gray-900' }}">
+                                {{ __('About') }}
+                            </a>
                             <a href="{{ route('projects.index') }}"
                                class="transition {{ request()->routeIs('projects.*') ? 'text-indigo-600 font-semibold' : 'text-gray-600 hover:text-gray-900' }}">
                                 {{ __('Projects') }}

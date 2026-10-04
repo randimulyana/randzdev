@@ -39,7 +39,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('tags', TagController::class)->except('show');
     Route::resource('posts', PostController::class)->except('show');
     Route::resource('learning-paths', LearningPathController::class)->except('show');
-    Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except('show');
+    Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';

@@ -13,14 +13,6 @@ use Illuminate\View\View;
 class LessonController extends Controller
 {
     /**
-     * Display a listing of the lessons for the given learning path.
-     */
-    public function index(LearningPath $learningPath): RedirectResponse
-    {
-        return redirect()->route('admin.learning-paths.edit', $learningPath);
-    }
-
-    /**
      * Show the form for creating a new lesson.
      */
     public function create(LearningPath $learningPath): View

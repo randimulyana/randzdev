@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicBlogController;
+use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
@@ -21,6 +22,10 @@ Route::get('/projects/{project}', [PublicProjectController::class, 'show'])->nam
 
 Route::get('/blog', [PublicBlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post}', [PublicBlogController::class, 'show'])->name('blog.show');
+
+Route::get('/learn', [PublicLearningController::class, 'index'])->name('learn.index');
+Route::get('/learn/{learningPath}', [PublicLearningController::class, 'show'])->name('learn.show');
+Route::get('/learn/{learningPath}/{lesson}', [PublicLearningController::class, 'lesson'])->name('learn.lesson');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

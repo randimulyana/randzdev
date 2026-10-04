@@ -20,9 +20,9 @@ test('the seeder creates exactly the defined permissions and roles', function ()
 test('the seeder can be run repeatedly without duplicating records', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $this->assertDatabaseCount('permissions', 40);
+    $this->assertDatabaseCount('permissions', 41);
     $this->assertDatabaseCount('roles', 3);
-    $this->assertDatabaseCount('role_has_permissions', 40 + 28 + 4);
+    $this->assertDatabaseCount('role_has_permissions', 41 + 28 + 4);
 });
 
 test('admin is granted every permission', function () {
@@ -77,6 +77,7 @@ test('author cannot manage users, roles, or permissions', function (string $perm
     'users.view', 'users.create', 'users.update', 'users.delete',
     'roles.view', 'roles.create', 'roles.update', 'roles.delete',
     'permissions.view', 'permissions.create', 'permissions.update', 'permissions.delete',
+    'contact_messages.view',
 ]);
 
 test('user can view content', function (string $permission) {

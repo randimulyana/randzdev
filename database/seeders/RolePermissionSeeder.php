@@ -64,6 +64,8 @@ class RolePermissionSeeder extends Seeder
         'permissions.create',
         'permissions.update',
         'permissions.delete',
+
+        'contact_messages.view',
     ];
 
     /**

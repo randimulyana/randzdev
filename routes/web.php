@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactMessageController;
 use App\Http\Controllers\LearningPathController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PublicBlogController;
+use App\Http\Controllers\PublicContactController;
 use App\Http\Controllers\PublicHomeController;
 use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
@@ -27,6 +29,9 @@ Route::get('/learn', [PublicLearningController::class, 'index'])->name('learn.in
 Route::get('/learn/{learningPath}', [PublicLearningController::class, 'show'])->name('learn.show');
 Route::get('/learn/{learningPath}/{lesson}', [PublicLearningController::class, 'lesson'])->name('learn.lesson');
 
+Route::get('/contact', [PublicContactController::class, 'show'])->name('contact');
+Route::post('/contact', [PublicContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -45,6 +50,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('posts', PostController::class)->except('show');
     Route::resource('learning-paths', LearningPathController::class)->except('show');
     Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except(['index', 'show']);
+    Route::resource('contact-messages', ContactMessageController::class)->only(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';

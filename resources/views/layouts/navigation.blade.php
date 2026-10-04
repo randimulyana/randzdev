@@ -21,6 +21,12 @@
                             {{ __('Learning Paths') }}
                         </x-nav-link>
                     @endcan
+
+                    @can('viewAny', App\Models\ContactMessage::class)
+                        <x-nav-link :href="route('admin.contact-messages.index')" :active="request()->routeIs('admin.contact-messages.*')">
+                            {{ __('Contact Messages') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -80,6 +86,12 @@
             @can('viewAny', App\Models\LearningPath::class)
                 <x-responsive-nav-link :href="route('admin.learning-paths.index')" :active="request()->routeIs('admin.learning-paths.*')">
                     {{ __('Learning Paths') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\ContactMessage::class)
+                <x-responsive-nav-link :href="route('admin.contact-messages.index')" :active="request()->routeIs('admin.contact-messages.*')">
+                    {{ __('Contact Messages') }}
                 </x-responsive-nav-link>
             @endcan
         </div>

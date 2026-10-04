@@ -15,6 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @can('viewAny', App\Models\LearningPath::class)
+                        <x-nav-link :href="route('admin.learning-paths.index')" :active="request()->routeIs('admin.learning-paths.*')">
+                            {{ __('Learning Paths') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -70,6 +76,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @can('viewAny', App\Models\LearningPath::class)
+                <x-responsive-nav-link :href="route('admin.learning-paths.index')" :active="request()->routeIs('admin.learning-paths.*')">
+                    {{ __('Learning Paths') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

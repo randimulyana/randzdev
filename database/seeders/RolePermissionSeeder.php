@@ -25,6 +25,11 @@ class RolePermissionSeeder extends Seeder
         'projects.update',
         'projects.delete',
 
+        'learning_paths.view',
+        'learning_paths.create',
+        'learning_paths.update',
+        'learning_paths.delete',
+
         'lessons.view',
         'lessons.create',
         'lessons.update',
@@ -77,6 +82,11 @@ class RolePermissionSeeder extends Seeder
         'projects.update',
         'projects.delete',
 
+        'learning_paths.view',
+        'learning_paths.create',
+        'learning_paths.update',
+        'learning_paths.delete',
+
         'lessons.view',
         'lessons.create',
         'lessons.update',
@@ -106,6 +116,7 @@ class RolePermissionSeeder extends Seeder
     public const USER_PERMISSIONS = [
         'posts.view',
         'projects.view',
+        'learning_paths.view',
         'lessons.view',
     ];
 

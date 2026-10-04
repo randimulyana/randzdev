@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LearningPathController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -36,6 +38,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('projects', ProjectController::class)->except('show');
     Route::resource('tags', TagController::class)->except('show');
     Route::resource('posts', PostController::class)->except('show');
+    Route::resource('learning-paths', LearningPathController::class)->except('show');
+    Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except('show');
 });
 
 require __DIR__.'/auth.php';

@@ -20,9 +20,9 @@ test('the seeder creates exactly the defined permissions and roles', function ()
 test('the seeder can be run repeatedly without duplicating records', function () {
     $this->seed(RolePermissionSeeder::class);
 
-    $this->assertDatabaseCount('permissions', 36);
+    $this->assertDatabaseCount('permissions', 40);
     $this->assertDatabaseCount('roles', 3);
-    $this->assertDatabaseCount('role_has_permissions', 36 + 24 + 3);
+    $this->assertDatabaseCount('role_has_permissions', 40 + 28 + 4);
 });
 
 test('admin is granted every permission', function () {
@@ -41,6 +41,7 @@ test('admin can manage everything', function (string $permission) {
 })->with([
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
+    'learning_paths.create', 'learning_paths.update', 'learning_paths.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.create', 'categories.update', 'categories.delete',
     'technologies.create', 'technologies.update', 'technologies.delete',
@@ -60,6 +61,7 @@ test('author can manage content', function (string $permission) {
 })->with([
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
+    'learning_paths.view', 'learning_paths.create', 'learning_paths.update', 'learning_paths.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.view', 'categories.create', 'categories.update', 'categories.delete',
     'technologies.view', 'technologies.create', 'technologies.update', 'technologies.delete',
@@ -85,7 +87,7 @@ test('user can view content', function (string $permission) {
         ->and($pengguna->hasPermissionTo($permission))->toBeTrue()
         ->and($pengguna->can($permission))->toBeTrue();
 })->with([
-    'posts.view', 'projects.view', 'lessons.view',
+    'posts.view', 'projects.view', 'learning_paths.view', 'lessons.view',
 ]);
 
 test('user cannot modify content', function (string $permission) {
@@ -96,6 +98,7 @@ test('user cannot modify content', function (string $permission) {
 })->with([
     'posts.create', 'posts.update', 'posts.delete',
     'projects.create', 'projects.update', 'projects.delete',
+    'learning_paths.create', 'learning_paths.update', 'learning_paths.delete',
     'lessons.create', 'lessons.update', 'lessons.delete',
     'categories.create', 'categories.update', 'categories.delete',
     'technologies.create', 'technologies.update', 'technologies.delete',

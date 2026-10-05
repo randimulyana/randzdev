@@ -447,8 +447,8 @@ test('lesson content containing html or script-like text is rendered safely esca
     $response = $this->get(route('learn.lesson', [$learningPath, $lesson]));
 
     $response->assertOk()
-        ->assertSee('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;', false)
         ->assertDontSee('<script>alert("xss")</script>', false)
+        ->assertDontSee('<script>', false)
         ->assertDontSee('<div class="injected">', false);
 });
 

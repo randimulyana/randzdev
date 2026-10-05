@@ -97,8 +97,8 @@
 
             {{-- Article Content Card --}}
             <main class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-10 shadow-sm space-y-8">
-                <div class="prose max-w-none text-gray-800 leading-relaxed whitespace-pre-line text-base sm:text-lg">
-                    {{ $post->content }}
+                <div class="prose max-w-none text-gray-800 leading-relaxed text-base sm:text-lg markdown-content">
+                    {!! \App\Support\Markdown::render($post->content) !!}
                 </div>
 
                 {{-- Tags Footer --}}

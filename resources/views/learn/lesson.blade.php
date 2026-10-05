@@ -58,8 +58,8 @@
 
             <!-- Lesson Content Area -->
             <main class="bg-white rounded-2xl border border-gray-200 p-6 sm:p-10 shadow-sm">
-                <div class="text-gray-800 leading-relaxed whitespace-pre-wrap font-sans text-base sm:text-lg overflow-x-auto">
-{{ $lesson->content }}
+                <div class="prose max-w-none text-gray-800 leading-relaxed text-base sm:text-lg markdown-content">
+                    {!! \App\Support\Markdown::render($lesson->content) !!}
                 </div>
             </main>
 

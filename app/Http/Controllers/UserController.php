@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -35,7 +36,7 @@ class UserController extends Controller
     {
         Gate::authorize('create', User::class);
 
-        $roles = ['admin', 'author', 'user'];
+        $roles = Role::query()->orderBy('name')->pluck('name')->all();
 
         return view('admin.users.create', compact('roles'));
     }
@@ -68,7 +69,7 @@ class UserController extends Controller
         Gate::authorize('update', $user);
 
         $user->load('roles');
-        $roles = ['admin', 'author', 'user'];
+        $roles = Role::query()->orderBy('name')->pluck('name')->all();
 
         return view('admin.users.edit', compact('user', 'roles'));
     }

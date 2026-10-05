@@ -69,6 +69,18 @@
                             {{ __('Users') }}
                         </x-nav-link>
                     @endcan
+
+                    @can('viewAny', \Spatie\Permission\Models\Role::class)
+                        <x-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
+                    @endcan
+
+                    @if (Auth::user()?->can('permissions.view'))
+                        <x-nav-link :href="route('admin.permissions.index')" :active="request()->routeIs('admin.permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -178,6 +190,18 @@
                     {{ __('Users') }}
                 </x-responsive-nav-link>
             @endcan
+
+            @can('viewAny', \Spatie\Permission\Models\Role::class)
+                <x-responsive-nav-link :href="route('admin.roles.index')" :active="request()->routeIs('admin.roles.*')">
+                    {{ __('Roles') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @if (Auth::user()?->can('permissions.view'))
+                <x-responsive-nav-link :href="route('admin.permissions.index')" :active="request()->routeIs('admin.permissions.*')">
+                    {{ __('Permissions') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

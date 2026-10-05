@@ -9,7 +9,7 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('admin.posts.update', $post) }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.posts.update', $post) }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT')
 
@@ -22,7 +22,7 @@
 
                             <div>
                                 <x-input-label for="slug" :value="__('Slug')" />
-                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug', $post->slug)" required />
+                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug', $post->slug)" placeholder="{{ __('Leave blank to keep existing slug') }}" />
                                 <x-input-error class="mt-2" :messages="$errors->get('slug')" />
                             </div>
                         </div>
@@ -88,9 +88,22 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <x-input-label for="featured_image" :value="__('Featured Image (path or URL)')" />
-                                <x-text-input id="featured_image" name="featured_image" type="text" class="mt-1 block w-full" :value="old('featured_image', $post->featured_image)" placeholder="e.g. /images/posts/cover.jpg" />
-                                <x-input-error class="mt-2" :messages="$errors->get('featured_image')" />
+                                <x-input-label for="featured_image_file" :value="__('Upload New Featured Image')" />
+                                @if ($post->featured_image)
+                                    <div class="my-2 flex items-center space-x-3">
+                                        <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" class="h-16 w-16 rounded object-cover border border-gray-200">
+                                        <span class="text-xs text-gray-500 break-all">{{ $post->featured_image }}</span>
+                                    </div>
+                                @endif
+                                <input id="featured_image_file" name="featured_image_file" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                <p class="mt-1 text-xs text-gray-500">{{ __('Supports JPG, PNG, WEBP, GIF up to 2MB. Takes precedence over URL.') }}</p>
+                                <x-input-error class="mt-2" :messages="$errors->get('featured_image_file')" />
+
+                                <div class="mt-3">
+                                    <x-input-label for="featured_image" :value="__('Or Image URL / Path')" />
+                                    <x-text-input id="featured_image" name="featured_image" type="text" class="mt-1 block w-full" :value="old('featured_image', $post->featured_image)" placeholder="e.g. /images/posts/cover.jpg" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('featured_image')" />
+                                </div>
                             </div>
 
                             <div>

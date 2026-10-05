@@ -31,7 +31,7 @@ class UpdatePostRequest extends FormRequest
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('posts', 'slug')->ignore($this->route('post')),
@@ -39,6 +39,7 @@ class UpdatePostRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:1000'],
             'content' => ['required', 'string'],
             'featured_image' => ['nullable', 'string', 'max:255'],
+            'featured_image_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'],
             'type' => ['required', 'string', Rule::in(['article', 'tutorial', 'note', 'guide', 'case_study'])],
             'status' => ['required', 'string', Rule::in(['draft', 'published', 'archived'])],
             'reading_time' => ['nullable', 'integer', 'min:1', 'max:1000'],

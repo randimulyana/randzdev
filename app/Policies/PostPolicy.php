@@ -46,4 +46,20 @@ class PostPolicy
     {
         return $user->hasRole('admin') || ($user->can('posts.delete') && $post->author_id === $user->id);
     }
+
+    /**
+     * Determine whether the user can publish the post.
+     */
+    public function publish(User $user, Post $post): bool
+    {
+        return $this->update($user, $post);
+    }
+
+    /**
+     * Determine whether the user can unpublish the post.
+     */
+    public function unpublish(User $user, Post $post): bool
+    {
+        return $this->update($user, $post);
+    }
 }

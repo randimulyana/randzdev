@@ -150,6 +150,28 @@
                                                 <a href="{{ route('admin.posts.edit', $post) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
                                                     {{ __('Edit') }}
                                                 </a>
+
+                                                @if ($post->status === 'published')
+                                                    @can('unpublish', $post)
+                                                        <form action="{{ route('admin.posts.unpublish', $post) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-amber-600 hover:text-amber-900 font-medium">
+                                                                {{ __('Unpublish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @else
+                                                    @can('publish', $post)
+                                                        <form action="{{ route('admin.posts.publish', $post) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-emerald-600 hover:text-emerald-900 font-medium">
+                                                                {{ __('Publish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @endif
                                             @endcan
                                             @can('delete', $post)
                                                 <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ __('Are you sure you want to delete this post?') }}');">

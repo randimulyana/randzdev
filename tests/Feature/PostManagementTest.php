@@ -5,6 +5,8 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     $this->seed(RolePermissionSeeder::class);
@@ -24,6 +26,8 @@ test('guests are redirected to login for post routes', function () {
     $this->get(route('admin.posts.edit', $post))->assertRedirect(route('login'));
     $this->put(route('admin.posts.update', $post), ['title' => 'Test', 'slug' => 'test'])->assertRedirect(route('login'));
     $this->delete(route('admin.posts.destroy', $post))->assertRedirect(route('login'));
+    $this->patch(route('admin.posts.publish', $post))->assertRedirect(route('login'));
+    $this->patch(route('admin.posts.unpublish', $post))->assertRedirect(route('login'));
 });
 
 test('unauthorized users cannot access post routes', function () {
@@ -47,6 +51,8 @@ test('unauthorized users cannot access post routes', function () {
         'status' => 'draft',
     ])->assertForbidden();
     $this->actingAs($this->user)->delete(route('admin.posts.destroy', $post))->assertForbidden();
+    $this->actingAs($this->user)->patch(route('admin.posts.publish', $post))->assertForbidden();
+    $this->actingAs($this->user)->patch(route('admin.posts.unpublish', $post))->assertForbidden();
 });
 
 test('authorized users can view post index with details', function (string $role) {
@@ -548,4 +554,282 @@ test('unmatched search and filter displays filter-specific empty state with rese
     $response->assertOk()
         ->assertSee('No posts found matching your search or filters.')
         ->assertSee(route('admin.posts.index'));
+});
+
+test('authorized user can publish a draft post', function () {
+    $post = Post::factory()->create([
+        'author_id' => $this->author->id,
+        'status' => 'draft',
+        'published_at' => null,
+    ]);
+
+    $response = $this->actingAs($this->author)->patch(route('admin.posts.publish', $post));
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post published successfully.');
+
+    $post->refresh();
+    expect($post->status)->toBe('published')
+        ->and($post->published_at)->not->toBeNull();
+});
+
+test('authorized user can unpublish a published post', function () {
+    $post = Post::factory()->create([
+        'author_id' => $this->author->id,
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $response = $this->actingAs($this->author)->patch(route('admin.posts.unpublish', $post));
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post unpublished successfully.');
+
+    $post->refresh();
+    expect($post->status)->toBe('draft');
+});
+
+test('author cannot publish or unpublish another authors post', function () {
+    $post = Post::factory()->create([
+        'author_id' => $this->otherAuthor->id,
+        'status' => 'draft',
+    ]);
+
+    $this->actingAs($this->author)
+        ->patch(route('admin.posts.publish', $post))
+        ->assertForbidden();
+
+    $post->update(['status' => 'published']);
+
+    $this->actingAs($this->author)
+        ->patch(route('admin.posts.unpublish', $post))
+        ->assertForbidden();
+});
+
+test('admin can publish or unpublish any authors post', function () {
+    $post = Post::factory()->create([
+        'author_id' => $this->author->id,
+        'status' => 'draft',
+    ]);
+
+    $response = $this->actingAs($this->admin)->patch(route('admin.posts.publish', $post));
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post published successfully.');
+
+    expect($post->refresh()->status)->toBe('published');
+
+    $response = $this->actingAs($this->admin)->patch(route('admin.posts.unpublish', $post));
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post unpublished successfully.');
+
+    expect($post->refresh()->status)->toBe('draft');
+});
+
+test('post automatically generates slug from title when slug is omitted on store', function () {
+    $response = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Building Scalable APIs with Laravel',
+        'slug' => '',
+        'content' => 'Sample content for API design.',
+        'type' => 'article',
+        'status' => 'draft',
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post created successfully.');
+
+    $this->assertDatabaseHas('posts', [
+        'title' => 'Building Scalable APIs with Laravel',
+        'slug' => 'building-scalable-apis-with-laravel',
+    ]);
+});
+
+test('post generates unique slug with incrementing suffix on collision', function () {
+    Post::factory()->create([
+        'title' => 'Duplicate Title Post',
+        'slug' => 'duplicate-title-post',
+    ]);
+
+    $response1 = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Duplicate Title Post',
+        'slug' => '',
+        'content' => 'Content 1',
+        'type' => 'article',
+        'status' => 'draft',
+    ]);
+    $response1->assertRedirect(route('admin.posts.index'));
+
+    $this->assertDatabaseHas('posts', [
+        'slug' => 'duplicate-title-post-1',
+    ]);
+
+    $response2 = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Duplicate Title Post',
+        'slug' => '',
+        'content' => 'Content 2',
+        'type' => 'article',
+        'status' => 'draft',
+    ]);
+    $response2->assertRedirect(route('admin.posts.index'));
+
+    $this->assertDatabaseHas('posts', [
+        'slug' => 'duplicate-title-post-2',
+    ]);
+});
+
+test('post retains existing slug on update when slug is omitted', function () {
+    $post = Post::factory()->create([
+        'author_id' => $this->author->id,
+        'title' => 'Original Post Title',
+        'slug' => 'keep-this-exact-slug',
+    ]);
+
+    $response = $this->actingAs($this->author)->put(route('admin.posts.update', $post), [
+        'title' => 'Renamed Title Without Changing Slug',
+        'slug' => '',
+        'content' => 'Updated content',
+        'type' => 'article',
+        'status' => 'draft',
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post updated successfully.');
+
+    $post->refresh();
+    expect($post->title)->toBe('Renamed Title Without Changing Slug')
+        ->and($post->slug)->toBe('keep-this-exact-slug');
+});
+
+test('admin can upload featured image file when creating post', function () {
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->image('cover-test.jpg', 800, 600);
+
+    $response = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Post With Image Upload',
+        'content' => 'Post content testing image uploads.',
+        'type' => 'article',
+        'status' => 'draft',
+        'featured_image_file' => $file,
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post created successfully.');
+
+    $post = Post::where('title', 'Post With Image Upload')->first();
+    expect($post)->not->toBeNull()
+        ->and($post->featured_image)->toStartWith('/storage/posts/');
+
+    $relativeStoragePath = str_replace('/storage/', '', $post->featured_image);
+    Storage::disk('public')->assertExists($relativeStoragePath);
+});
+
+test('admin can replace featured image file and old local file is removed', function () {
+    Storage::fake('public');
+
+    $oldPath = 'posts/old-post-image.jpg';
+    Storage::disk('public')->put($oldPath, 'dummy old image content');
+
+    $post = Post::factory()->create([
+        'author_id' => $this->admin->id,
+        'featured_image' => '/storage/'.$oldPath,
+    ]);
+
+    $newFile = UploadedFile::fake()->image('brand-new-image.png', 800, 600);
+
+    $response = $this->actingAs($this->admin)->put(route('admin.posts.update', $post), [
+        'title' => $post->title,
+        'slug' => $post->slug,
+        'content' => $post->content,
+        'type' => $post->type,
+        'status' => $post->status,
+        'featured_image_file' => $newFile,
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post updated successfully.');
+
+    Storage::disk('public')->assertMissing($oldPath);
+
+    $post->refresh();
+    expect($post->featured_image)->toStartWith('/storage/posts/')
+        ->and($post->featured_image)->not->toBe('/storage/'.$oldPath);
+
+    $newStoragePath = str_replace('/storage/', '', $post->featured_image);
+    Storage::disk('public')->assertExists($newStoragePath);
+});
+
+test('replacing featured image preserves safety when old image is external URL', function () {
+    Storage::fake('public');
+
+    $post = Post::factory()->create([
+        'author_id' => $this->admin->id,
+        'featured_image' => 'https://images.unsplash.com/photo-sample-12345',
+    ]);
+
+    $newFile = UploadedFile::fake()->image('new-replacement.jpg', 400, 300);
+
+    $response = $this->actingAs($this->admin)->put(route('admin.posts.update', $post), [
+        'title' => $post->title,
+        'slug' => $post->slug,
+        'content' => $post->content,
+        'type' => $post->type,
+        'status' => $post->status,
+        'featured_image_file' => $newFile,
+    ]);
+
+    $response->assertRedirect(route('admin.posts.index'))
+        ->assertSessionHas('success', 'Post updated successfully.');
+
+    $post->refresh();
+    expect($post->featured_image)->toStartWith('/storage/posts/');
+});
+
+test('featured image file validation rejects invalid files and excessive file sizes', function () {
+    $pdfFile = UploadedFile::fake()->create('document.pdf', 500);
+
+    $response1 = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Invalid File Type Post',
+        'content' => 'Content',
+        'type' => 'article',
+        'status' => 'draft',
+        'featured_image_file' => $pdfFile,
+    ]);
+
+    $response1->assertSessionHasErrors(['featured_image_file']);
+
+    $oversizedFile = UploadedFile::fake()->image('massive.jpg')->size(3000);
+
+    $response2 = $this->actingAs($this->admin)->post(route('admin.posts.store'), [
+        'title' => 'Oversized Image Post',
+        'content' => 'Content',
+        'type' => 'article',
+        'status' => 'draft',
+        'featured_image_file' => $oversizedFile,
+    ]);
+
+    $response2->assertSessionHasErrors(['featured_image_file']);
+});
+
+test('admin post index displays publish or unpublish action buttons depending on status', function () {
+    $draftPost = Post::factory()->create([
+        'title' => 'Draft Post Needs Publishing',
+        'status' => 'draft',
+        'author_id' => $this->admin->id,
+    ]);
+
+    $publishedPost = Post::factory()->create([
+        'title' => 'Live Post Ready To Unpublish',
+        'status' => 'published',
+        'author_id' => $this->admin->id,
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index'));
+
+    $response->assertOk()
+        ->assertSee('Publish')
+        ->assertSee('Unpublish')
+        ->assertSee(route('admin.posts.publish', $draftPost))
+        ->assertSee(route('admin.posts.unpublish', $publishedPost));
 });

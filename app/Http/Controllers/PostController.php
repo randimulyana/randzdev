@@ -11,6 +11,8 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -72,10 +74,18 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request): RedirectResponse
     {
-        $data = $request->safe()->except('tags');
+        $data = $request->safe()->except(['tags', 'featured_image_file']);
 
         if (! $request->user()->hasRole('admin') || empty($data['author_id'])) {
             $data['author_id'] = $request->user()->id;
+        }
+
+        if (empty($data['slug'])) {
+            $data['slug'] = $this->generateUniqueSlug($data['title']);
+        }
+
+        if ($request->hasFile('featured_image_file')) {
+            $data['featured_image'] = $this->handleFeaturedImage($request);
         }
 
         if ($data['status'] === 'published') {
@@ -118,10 +128,18 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
-        $data = $request->safe()->except('tags');
+        $data = $request->safe()->except(['tags', 'featured_image_file']);
 
         if (! $request->user()->hasRole('admin')) {
             unset($data['author_id']);
+        }
+
+        if (empty($data['slug'])) {
+            $data['slug'] = $post->slug;
+        }
+
+        if ($request->hasFile('featured_image_file')) {
+            $data['featured_image'] = $this->handleFeaturedImage($request, $post);
         }
 
         if ($data['status'] === 'published') {
@@ -154,5 +172,97 @@ class PostController extends Controller
         return redirect()
             ->route('admin.posts.index')
             ->with('success', 'Post deleted successfully.');
+    }
+
+    /**
+     * Publish the specified post.
+     */
+    public function publish(Post $post): RedirectResponse
+    {
+        Gate::authorize('publish', $post);
+
+        $post->update([
+            'status' => 'published',
+            'published_at' => $post->published_at ?? now(),
+        ]);
+
+        return redirect()
+            ->back(fallback: route('admin.posts.index'))
+            ->with('success', 'Post published successfully.');
+    }
+
+    /**
+     * Unpublish the specified post.
+     */
+    public function unpublish(Post $post): RedirectResponse
+    {
+        Gate::authorize('unpublish', $post);
+
+        $post->update([
+            'status' => 'draft',
+        ]);
+
+        return redirect()
+            ->back(fallback: route('admin.posts.index'))
+            ->with('success', 'Post unpublished successfully.');
+    }
+
+    /**
+     * Generate a unique slug from title.
+     */
+    protected function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::slug($title);
+        if ($baseSlug === '') {
+            $baseSlug = 'post';
+        }
+
+        $slug = $baseSlug;
+        $counter = 1;
+
+        while (Post::where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists()) {
+            $slug = "{$baseSlug}-{$counter}";
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Handle featured image upload and cleanup of old local image.
+     */
+    protected function handleFeaturedImage(Request $request, ?Post $post = null): ?string
+    {
+        if ($request->hasFile('featured_image_file')) {
+            $file = $request->file('featured_image_file');
+            $path = $file->store('posts', 'public');
+            $newUrl = Storage::url($path);
+
+            if ($post && ! empty($post->featured_image)) {
+                $this->deleteStoredImageIfLocal($post->featured_image);
+            }
+
+            return $newUrl;
+        }
+
+        if ($request->has('featured_image')) {
+            return $request->input('featured_image');
+        }
+
+        return $post?->featured_image;
+    }
+
+    /**
+     * Delete stored image file if it is in the public local disk.
+     */
+    protected function deleteStoredImageIfLocal(string $url): void
+    {
+        $storagePrefix = '/storage/';
+        if (str_starts_with($url, $storagePrefix)) {
+            $relativePath = substr($url, strlen($storagePrefix));
+            if (str_starts_with($relativePath, 'posts/') && Storage::disk('public')->exists($relativePath)) {
+                Storage::disk('public')->delete($relativePath);
+            }
+        }
     }
 }

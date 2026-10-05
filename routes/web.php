@@ -13,6 +13,7 @@ use App\Http\Controllers\PublicContactController;
 use App\Http\Controllers\PublicHomeController;
 use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
+use App\Http\Controllers\PublicSearchController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
@@ -34,6 +35,8 @@ Route::get('/learn/{learningPath}/{lesson}', [PublicLearningController::class, '
 
 Route::get('/contact', [PublicContactController::class, 'show'])->name('contact');
 Route::post('/contact', [PublicContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
+
+Route::get('/search', [PublicSearchController::class, 'index'])->name('search');
 
 Route::get('/dashboard', function () {
     if (auth()->user()?->hasRole('admin')) {

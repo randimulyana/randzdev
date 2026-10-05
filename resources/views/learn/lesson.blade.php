@@ -11,6 +11,12 @@
         {{ route('learn.lesson', [$learningPath, $lesson]) }}
     </x-slot:canonicalUrl>
 
+    <x-slot:metaType>article</x-slot:metaType>
+
+    @if ($learningPath->thumbnail)
+        <x-slot:metaImage>{{ $learningPath->thumbnail }}</x-slot:metaImage>
+    @endif
+
     <div class="py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <!-- Breadcrumb & Back Navigation -->

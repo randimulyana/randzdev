@@ -15,6 +15,7 @@ use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\PublicSearchController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
 use App\Http\Controllers\UserController;
@@ -37,6 +38,9 @@ Route::get('/contact', [PublicContactController::class, 'show'])->name('contact'
 Route::post('/contact', [PublicContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
 Route::get('/search', [PublicSearchController::class, 'index'])->name('search');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::get('/dashboard', function () {
     if (auth()->user()?->hasRole('admin')) {

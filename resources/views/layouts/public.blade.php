@@ -15,6 +15,37 @@
             <link rel="canonical" href="{{ $canonicalUrl }}">
         @endif
 
+        @php
+            $pageTitle = isset($title) ? trim(strip_tags((string) $title)) : config('app.name', 'Randz.dev') . ' — Portfolio';
+            $pageDescription = ! empty($metaDescription)
+                ? trim(strip_tags((string) $metaDescription))
+                : config('portfolio.profile.headline', 'I build web applications and document what I learn about programming.');
+            $pageUrl = ! empty($canonicalUrl) ? (string) $canonicalUrl : url()->current();
+            $pageType = ! empty($metaType) ? (string) $metaType : 'website';
+            $pageImage = ! empty($metaImage) ? (string) $metaImage : null;
+            if ($pageImage && ! \Illuminate\Support\Str::startsWith($pageImage, ['http://', 'https://'])) {
+                $pageImage = url($pageImage);
+            }
+        @endphp
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:site_name" content="{{ config('app.name', 'Randz.dev') }}">
+        <meta property="og:title" content="{{ $pageTitle }}">
+        <meta property="og:description" content="{{ $pageDescription }}">
+        <meta property="og:url" content="{{ $pageUrl }}">
+        <meta property="og:type" content="{{ $pageType }}">
+        @if (! empty($pageImage))
+            <meta property="og:image" content="{{ $pageImage }}">
+        @endif
+
+        <!-- Twitter / X Card -->
+        <meta name="twitter:card" content="{{ ! empty($twitterCard) ? $twitterCard : (! empty($pageImage) ? 'summary_large_image' : 'summary') }}">
+        <meta name="twitter:title" content="{{ $pageTitle }}">
+        <meta name="twitter:description" content="{{ $pageDescription }}">
+        @if (! empty($pageImage))
+            <meta name="twitter:image" content="{{ $pageImage }}">
+        @endif
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />

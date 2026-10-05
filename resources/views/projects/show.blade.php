@@ -3,6 +3,20 @@
         {{ $project->title }}
     </x-slot:title>
 
+    <x-slot:metaDescription>
+        {{ $project->short_description ?: \Illuminate\Support\Str::limit(strip_tags($project->description ?? ''), 160) }}
+    </x-slot:metaDescription>
+
+    <x-slot:canonicalUrl>
+        {{ route('projects.show', $project) }}
+    </x-slot:canonicalUrl>
+
+    <x-slot:metaType>website</x-slot:metaType>
+
+    @if ($project->thumbnail)
+        <x-slot:metaImage>{{ $project->thumbnail }}</x-slot:metaImage>
+    @endif
+
     <div class="py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <!-- Back Navigation -->

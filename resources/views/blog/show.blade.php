@@ -11,6 +11,12 @@
         {{ $post->canonical_url ?: route('blog.show', $post) }}
     </x-slot:canonicalUrl>
 
+    <x-slot:metaType>article</x-slot:metaType>
+
+    @if ($post->featured_image)
+        <x-slot:metaImage>{{ $post->featured_image }}</x-slot:metaImage>
+    @endif
+
     <div class="py-12">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             {{-- Back Navigation --}}

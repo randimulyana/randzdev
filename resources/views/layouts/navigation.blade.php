@@ -63,6 +63,12 @@
                             {{ __('Contact Messages') }}
                         </x-nav-link>
                     @endcan
+
+                    @can('viewAny', App\Models\User::class)
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -164,6 +170,12 @@
             @can('viewAny', App\Models\ContactMessage::class)
                 <x-responsive-nav-link :href="route('admin.contact-messages.index')" :active="request()->routeIs('admin.contact-messages.*')">
                     {{ __('Contact Messages') }}
+                </x-responsive-nav-link>
+            @endcan
+
+            @can('viewAny', App\Models\User::class)
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Users') }}
                 </x-responsive-nav-link>
             @endcan
         </div>

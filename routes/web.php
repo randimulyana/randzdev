@@ -15,6 +15,7 @@ use App\Http\Controllers\PublicLearningController;
 use App\Http\Controllers\PublicProjectController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TechnologyController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicHomeController::class, 'index'])->name('home');
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('users', UserController::class)->except('show');
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('technologies', TechnologyController::class)->except('show');
     Route::resource('projects', ProjectController::class)->except('show');

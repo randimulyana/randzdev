@@ -46,4 +46,20 @@ class ProjectPolicy
     {
         return $user->can('projects.delete');
     }
+
+    /**
+     * Determine whether the user can publish the project.
+     */
+    public function publish(User $user, Project $project): bool
+    {
+        return $this->update($user, $project);
+    }
+
+    /**
+     * Determine whether the user can unpublish the project.
+     */
+    public function unpublish(User $user, Project $project): bool
+    {
+        return $this->update($user, $project);
+    }
 }

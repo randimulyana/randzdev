@@ -63,6 +63,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::resource('users', UserController::class)->except('show');
     Route::resource('categories', CategoryController::class)->except('show');
     Route::resource('technologies', TechnologyController::class)->except('show');
+    Route::patch('projects/{project}/publish', [ProjectController::class, 'publish'])->name('projects.publish');
+    Route::patch('projects/{project}/unpublish', [ProjectController::class, 'unpublish'])->name('projects.unpublish');
     Route::resource('projects', ProjectController::class)->except('show');
     Route::resource('tags', TagController::class)->except('show');
     Route::patch('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');

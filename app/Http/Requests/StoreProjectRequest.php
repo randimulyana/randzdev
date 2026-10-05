@@ -36,10 +36,11 @@ class StoreProjectRequest extends FormRequest
         return [
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', Rule::unique('projects', 'slug')],
+            'slug' => ['nullable', 'required_without:title', 'string', 'max:255', Rule::unique('projects', 'slug')],
             'short_description' => ['nullable', 'string', 'max:1000'],
             'description' => ['nullable', 'string'],
             'thumbnail' => ['nullable', 'string', 'max:255'],
+            'thumbnail_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'],
             'role' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['draft', 'in_progress', 'completed', 'archived'])],
             'repository_url' => ['nullable', 'url', 'max:255'],

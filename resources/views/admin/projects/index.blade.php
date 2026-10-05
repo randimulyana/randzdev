@@ -87,6 +87,28 @@
                                                 <a href="{{ route('admin.projects.edit', $project) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
                                                     {{ __('Edit') }}
                                                 </a>
+
+                                                @if ($project->published_at !== null && $project->published_at->isPast() && $project->status !== 'draft')
+                                                    @can('unpublish', $project)
+                                                        <form action="{{ route('admin.projects.unpublish', $project) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-amber-600 hover:text-amber-900 font-medium">
+                                                                {{ __('Unpublish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @else
+                                                    @can('publish', $project)
+                                                        <form action="{{ route('admin.projects.publish', $project) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-emerald-600 hover:text-emerald-900 font-medium">
+                                                                {{ __('Publish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @endif
                                             @endcan
                                             @can('delete', $project)
                                                 <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ __('Are you sure you want to delete this project?') }}');">

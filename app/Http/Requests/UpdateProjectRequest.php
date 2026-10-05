@@ -37,7 +37,7 @@ class UpdateProjectRequest extends FormRequest
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('projects', 'slug')->ignore($this->route('project')),
@@ -45,6 +45,7 @@ class UpdateProjectRequest extends FormRequest
             'short_description' => ['nullable', 'string', 'max:1000'],
             'description' => ['nullable', 'string'],
             'thumbnail' => ['nullable', 'string', 'max:255'],
+            'thumbnail_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'],
             'role' => ['nullable', 'string', 'max:255'],
             'status' => ['required', 'string', Rule::in(['draft', 'in_progress', 'completed', 'archived'])],
             'repository_url' => ['nullable', 'url', 'max:255'],

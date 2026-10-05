@@ -401,3 +401,151 @@ test('post validates category and tags exist', function () {
 
     $response->assertSessionHasErrors(['category_id', 'tags.0']);
 });
+
+// ==========================================
+// Search & Filter Tests
+// ==========================================
+
+test('admin can search posts by title keyword', function () {
+    $match = Post::factory()->create([
+        'title' => 'Mastering Laravel Architecture',
+        'author_id' => $this->author->id,
+    ]);
+    $other = Post::factory()->create([
+        'title' => 'Getting Started with Docker Containers',
+        'author_id' => $this->author->id,
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', ['search' => 'Laravel Architecture']));
+
+    $response->assertOk()
+        ->assertSee('Mastering Laravel Architecture')
+        ->assertDontSee('Getting Started with Docker Containers');
+});
+
+test('whitespace-only search is treated as empty search', function () {
+    $postA = Post::factory()->create(['title' => 'First Post Alpha', 'author_id' => $this->author->id]);
+    $postB = Post::factory()->create(['title' => 'Second Post Beta', 'author_id' => $this->author->id]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', ['search' => '   ']));
+
+    $response->assertOk()
+        ->assertSee('First Post Alpha')
+        ->assertSee('Second Post Beta');
+});
+
+test('admin can filter posts by status', function (string $targetStatus) {
+    $draft = Post::factory()->create(['title' => 'Draft Item', 'status' => 'draft', 'author_id' => $this->author->id]);
+    $published = Post::factory()->create(['title' => 'Published Item', 'status' => 'published', 'author_id' => $this->author->id]);
+    $archived = Post::factory()->create(['title' => 'Archived Item', 'status' => 'archived', 'author_id' => $this->author->id]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', ['status' => $targetStatus]));
+
+    $response->assertOk();
+
+    if ($targetStatus === 'draft') {
+        $response->assertSee('Draft Item')
+            ->assertDontSee('Published Item')
+            ->assertDontSee('Archived Item');
+    } elseif ($targetStatus === 'published') {
+        $response->assertSee('Published Item')
+            ->assertDontSee('Draft Item')
+            ->assertDontSee('Archived Item');
+    } elseif ($targetStatus === 'archived') {
+        $response->assertSee('Archived Item')
+            ->assertDontSee('Draft Item')
+            ->assertDontSee('Published Item');
+    }
+})->with(['draft', 'published', 'archived']);
+
+test('admin can filter posts by category', function () {
+    $catDev = Category::factory()->create(['name' => 'Development']);
+    $catDesign = Category::factory()->create(['name' => 'Design']);
+
+    $postDev = Post::factory()->create(['title' => 'Dev Specific Post', 'category_id' => $catDev->id, 'author_id' => $this->author->id]);
+    $postDesign = Post::factory()->create(['title' => 'Design Specific Post', 'category_id' => $catDesign->id, 'author_id' => $this->author->id]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', ['category_id' => $catDev->id]));
+
+    $response->assertOk()
+        ->assertSee('Dev Specific Post')
+        ->assertDontSee('Design Specific Post');
+});
+
+test('admin can filter posts by author', function () {
+    $postAuthor1 = Post::factory()->create(['title' => 'Post by Author One', 'author_id' => $this->author->id]);
+    $postAuthor2 = Post::factory()->create(['title' => 'Post by Author Two', 'author_id' => $this->otherAuthor->id]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', ['author_id' => $this->author->id]));
+
+    $response->assertOk()
+        ->assertSee('Post by Author One')
+        ->assertDontSee('Post by Author Two');
+});
+
+test('admin can combine multiple filters with conjunctive AND condition', function () {
+    $cat = Category::factory()->create();
+
+    $exactMatch = Post::factory()->create([
+        'title' => 'VueJS Advanced Patterns',
+        'status' => 'published',
+        'category_id' => $cat->id,
+        'author_id' => $this->author->id,
+    ]);
+
+    $wrongStatus = Post::factory()->create([
+        'title' => 'VueJS Beginners Tutorial',
+        'status' => 'draft',
+        'category_id' => $cat->id,
+        'author_id' => $this->author->id,
+    ]);
+
+    $wrongAuthor = Post::factory()->create([
+        'title' => 'VueJS Components Architecture',
+        'status' => 'published',
+        'category_id' => $cat->id,
+        'author_id' => $this->otherAuthor->id,
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', [
+        'search' => 'VueJS',
+        'status' => 'published',
+        'category_id' => $cat->id,
+        'author_id' => $this->author->id,
+    ]));
+
+    $response->assertOk()
+        ->assertSee('VueJS Advanced Patterns')
+        ->assertDontSee('VueJS Beginners Tutorial')
+        ->assertDontSee('VueJS Components Architecture');
+});
+
+test('pagination links preserve active search and filter query parameters', function () {
+    Post::factory()->count(25)->create([
+        'title' => 'Searchable Paginated Article',
+        'status' => 'published',
+        'author_id' => $this->author->id,
+    ]);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', [
+        'search' => 'Searchable',
+        'status' => 'published',
+    ]));
+
+    $response->assertOk()
+        ->assertSee('page=2')
+        ->assertSee('search=Searchable')
+        ->assertSee('status=published');
+});
+
+test('unmatched search and filter displays filter-specific empty state with reset link', function () {
+    Post::factory()->create(['title' => 'Existing Normal Post']);
+
+    $response = $this->actingAs($this->admin)->get(route('admin.posts.index', [
+        'search' => 'NonExistentString12345',
+    ]));
+
+    $response->assertOk()
+        ->assertSee('No posts found matching your search or filters.')
+        ->assertSee(route('admin.posts.index'));
+});

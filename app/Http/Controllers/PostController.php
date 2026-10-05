@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
@@ -17,16 +18,37 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         Gate::authorize('viewAny', Post::class);
 
+        $search = trim((string) $request->input('search'));
+        $status = $request->input('status');
+        $categoryId = $request->input('category_id');
+        $authorId = $request->input('author_id');
+
         $posts = Post::query()
             ->with(['author', 'category', 'tags'])
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->when(in_array($status, ['draft', 'published', 'archived'], true), function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->when(! empty($categoryId), function ($query) use ($categoryId) {
+                $query->where('category_id', $categoryId);
+            })
+            ->when(! empty($authorId), function ($query) use ($authorId) {
+                $query->where('author_id', $authorId);
+            })
             ->latest()
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
-        return view('admin.posts.index', compact('posts'));
+        $categories = Category::query()->orderBy('name')->get();
+        $authors = User::role(['admin', 'author'])->orderBy('name')->get(['id', 'name']);
+
+        return view('admin.posts.index', compact('posts', 'categories', 'authors'));
     }
 
     /**

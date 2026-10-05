@@ -73,7 +73,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('learning-paths/{learning_path}/publish', [LearningPathController::class, 'publish'])->name('learning-paths.publish');
     Route::patch('learning-paths/{learning_path}/unpublish', [LearningPathController::class, 'unpublish'])->name('learning-paths.unpublish');
     Route::resource('learning-paths', LearningPathController::class)->except('show');
-    Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except(['index', 'show']);
+    Route::patch('learning-paths/{learning_path}/lessons/{lesson}/publish', [LessonController::class, 'publish'])->name('learning-paths.lessons.publish')->scopeBindings();
+    Route::patch('learning-paths/{learning_path}/lessons/{lesson}/unpublish', [LessonController::class, 'unpublish'])->name('learning-paths.lessons.unpublish')->scopeBindings();
+    Route::patch('learning-paths/{learning_path}/lessons/{lesson}/move-up', [LessonController::class, 'moveUp'])->name('learning-paths.lessons.move-up')->scopeBindings();
+    Route::patch('learning-paths/{learning_path}/lessons/{lesson}/move-down', [LessonController::class, 'moveDown'])->name('learning-paths.lessons.move-down')->scopeBindings();
+    Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except(['show']);
     Route::resource('contact-messages', ContactMessageController::class)->only(['index', 'show']);
 });
 

@@ -71,4 +71,20 @@ class LessonPolicy
         return $user->can('lessons.delete')
             && $lesson->learningPath->created_by === $user->id;
     }
+
+    /**
+     * Determine whether the user can publish the lesson.
+     */
+    public function publish(User $user, Lesson $lesson): bool
+    {
+        return $this->update($user, $lesson);
+    }
+
+    /**
+     * Determine whether the user can unpublish the lesson.
+     */
+    public function unpublish(User $user, Lesson $lesson): bool
+    {
+        return $this->update($user, $lesson);
+    }
 }

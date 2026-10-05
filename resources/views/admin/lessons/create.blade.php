@@ -1,5 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
+        <nav class="flex items-center text-xs font-medium text-gray-500 space-x-2 mb-1">
+            <a href="{{ route('admin.learning-paths.index') }}" class="hover:text-indigo-600 transition">
+                {{ __('Learning Paths') }}
+            </a>
+            <span>/</span>
+            <a href="{{ route('admin.learning-paths.edit', $learningPath) }}" class="hover:text-indigo-600 transition truncate max-w-xs sm:max-w-md">
+                {{ $learningPath->title }}
+            </a>
+            <span>/</span>
+            <span class="text-gray-700 font-semibold">{{ __('Add Lesson') }}</span>
+        </nav>
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Add Lesson to') }}: {{ $learningPath->title }}
         </h2>
@@ -21,7 +32,7 @@
 
                             <div>
                                 <x-input-label for="slug" :value="__('Slug')" />
-                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug')" required />
+                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug')" placeholder="{{ __('Leave blank to generate automatically from title') }}" />
                                 <x-input-error class="mt-2" :messages="$errors->get('slug')" />
                             </div>
                         </div>

@@ -123,11 +123,16 @@
                             <h3 class="text-lg font-bold text-gray-900">{{ __('Lessons in this Learning Path') }}</h3>
                             <p class="text-xs text-gray-500">{{ __('Lessons are ordered by numerical sequence (ascending).') }}</p>
                         </div>
-                        @can('create', [App\Models\Lesson::class, $learningPath])
-                            <a href="{{ route('admin.learning-paths.lessons.create', $learningPath) }}" class="inline-flex items-center px-3 py-1.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none transition">
-                                {{ __('Add Lesson') }}
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('admin.learning-paths.lessons.index', $learningPath) }}" class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-50 focus:outline-none transition">
+                                {{ __('Manage Lessons') }}
                             </a>
-                        @endcan
+                            @can('create', [App\Models\Lesson::class, $learningPath])
+                                <a href="{{ route('admin.learning-paths.lessons.create', $learningPath) }}" class="inline-flex items-center px-3 py-1.5 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none transition">
+                                    {{ __('Add Lesson') }}
+                                </a>
+                            @endcan
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -142,10 +147,38 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                @forelse ($learningPath->lessons as $lesson)
+                                @forelse ($learningPath->lessons as $index => $lesson)
                                     <tr class="hover:bg-gray-50">
-                                        <td class="px-4 py-4 whitespace-nowrap text-xs font-mono font-bold text-gray-700">
-                                            #{{ $lesson->order }}
+                                        <td class="px-4 py-4 whitespace-nowrap">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-xs font-mono font-bold text-gray-700 w-6">#{{ $lesson->order }}</span>
+                                                <div class="flex flex-col space-y-0.5">
+                                                    @can('update', $lesson)
+                                                        @if ($index > 0)
+                                                            <form action="{{ route('admin.learning-paths.lessons.move-up', [$learningPath, $lesson]) }}" method="POST" class="inline">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" title="{{ __('Move Up') }}" class="text-gray-400 hover:text-indigo-600 leading-none text-xs">
+                                                                    ▲
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <span class="text-gray-200 leading-none text-xs select-none">▲</span>
+                                                        @endif
+                                                        @if ($index < $learningPath->lessons->count() - 1)
+                                                            <form action="{{ route('admin.learning-paths.lessons.move-down', [$learningPath, $lesson]) }}" method="POST" class="inline">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" title="{{ __('Move Down') }}" class="text-gray-400 hover:text-indigo-600 leading-none text-xs">
+                                                                    ▼
+                                                                </button>
+                                                            </form>
+                                                        @else
+                                                            <span class="text-gray-200 leading-none text-xs select-none">▼</span>
+                                                        @endif
+                                                    @endcan
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                             <div class="font-medium text-gray-900">{{ $lesson->title }}</div>
@@ -168,8 +201,30 @@
                                             {{ $lesson->published_at?->format('Y-m-d H:i') ?? __('Draft') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                            @if ($lesson->status === 'published')
+                                                @can('unpublish', $lesson)
+                                                    <form action="{{ route('admin.learning-paths.lessons.unpublish', [$learningPath, $lesson]) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="text-amber-600 hover:text-amber-900 font-medium text-xs">
+                                                            {{ __('Unpublish') }}
+                                                        </button>
+                                                    </form>
+                                                @endcan
+                                            @else
+                                                @can('publish', $lesson)
+                                                    <form action="{{ route('admin.learning-paths.lessons.publish', [$learningPath, $lesson]) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button type="submit" class="text-emerald-600 hover:text-emerald-900 font-medium text-xs">
+                                                            {{ __('Publish') }}
+                                                        </button>
+                                                    </form>
+                                                @endcan
+                                            @endif
+
                                             @can('update', $lesson)
-                                                <a href="{{ route('admin.learning-paths.lessons.edit', [$learningPath, $lesson]) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
+                                                <a href="{{ route('admin.learning-paths.lessons.edit', [$learningPath, $lesson]) }}" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs">
                                                     {{ __('Edit') }}
                                                 </a>
                                             @endcan
@@ -177,7 +232,7 @@
                                                 <form action="{{ route('admin.learning-paths.lessons.destroy', [$learningPath, $lesson]) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ __('Are you sure you want to delete this lesson?') }}');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs">
                                                         {{ __('Delete') }}
                                                     </button>
                                                 </form>

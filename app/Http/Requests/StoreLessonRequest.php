@@ -42,7 +42,7 @@ class StoreLessonRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('lessons', 'slug')->where('learning_path_id', $learningPathId),

@@ -26,9 +26,10 @@ class StoreLearningPathRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', Rule::unique('learning_paths', 'slug')],
+            'slug' => ['nullable', 'required_without:title', 'string', 'max:255', Rule::unique('learning_paths', 'slug')],
             'description' => ['nullable', 'string'],
             'thumbnail' => ['nullable', 'string', 'max:255'],
+            'thumbnail_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'],
             'difficulty' => ['required', 'string', Rule::in(['beginner', 'intermediate', 'advanced'])],
             'estimated_duration' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', Rule::in(['draft', 'published', 'archived'])],

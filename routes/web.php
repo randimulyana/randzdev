@@ -70,6 +70,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::patch('posts/{post}/publish', [PostController::class, 'publish'])->name('posts.publish');
     Route::patch('posts/{post}/unpublish', [PostController::class, 'unpublish'])->name('posts.unpublish');
     Route::resource('posts', PostController::class)->except('show');
+    Route::patch('learning-paths/{learning_path}/publish', [LearningPathController::class, 'publish'])->name('learning-paths.publish');
+    Route::patch('learning-paths/{learning_path}/unpublish', [LearningPathController::class, 'unpublish'])->name('learning-paths.unpublish');
     Route::resource('learning-paths', LearningPathController::class)->except('show');
     Route::resource('learning-paths.lessons', LessonController::class)->scoped()->except(['index', 'show']);
     Route::resource('contact-messages', ContactMessageController::class)->only(['index', 'show']);

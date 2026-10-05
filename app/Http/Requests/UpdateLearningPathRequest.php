@@ -26,13 +26,14 @@ class UpdateLearningPathRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'slug' => [
-                'required',
+                'nullable',
                 'string',
                 'max:255',
                 Rule::unique('learning_paths', 'slug')->ignore($this->route('learning_path')),
             ],
             'description' => ['nullable', 'string'],
             'thumbnail' => ['nullable', 'string', 'max:255'],
+            'thumbnail_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:2048'],
             'difficulty' => ['required', 'string', Rule::in(['beginner', 'intermediate', 'advanced'])],
             'estimated_duration' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', Rule::in(['draft', 'published', 'archived'])],

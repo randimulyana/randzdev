@@ -86,6 +86,28 @@
                                                 <a href="{{ route('admin.learning-paths.edit', $learningPath) }}" class="text-indigo-600 hover:text-indigo-900 font-medium">
                                                     {{ __('Edit') }}
                                                 </a>
+
+                                                @if ($learningPath->published_at !== null && $learningPath->published_at->isPast() && $learningPath->status !== 'draft')
+                                                    @can('unpublish', $learningPath)
+                                                        <form action="{{ route('admin.learning-paths.unpublish', $learningPath) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-amber-600 hover:text-amber-900 font-medium">
+                                                                {{ __('Unpublish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @else
+                                                    @can('publish', $learningPath)
+                                                        <form action="{{ route('admin.learning-paths.publish', $learningPath) }}" method="POST" class="inline-block">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit" class="text-emerald-600 hover:text-emerald-900 font-medium">
+                                                                {{ __('Publish') }}
+                                                            </button>
+                                                        </form>
+                                                    @endcan
+                                                @endif
                                             @endcan
                                             @can('delete', $learningPath)
                                                 <form action="{{ route('admin.learning-paths.destroy', $learningPath) }}" method="POST" class="inline-block" onsubmit="return confirm('{{ __('Are you sure you want to delete this learning path?') }}');">

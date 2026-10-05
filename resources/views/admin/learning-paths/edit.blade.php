@@ -23,7 +23,7 @@
             {{-- Learning Path Edit Form --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form method="POST" action="{{ route('admin.learning-paths.update', $learningPath) }}" class="space-y-6">
+                    <form method="POST" action="{{ route('admin.learning-paths.update', $learningPath) }}" enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT')
 
@@ -36,7 +36,7 @@
 
                             <div>
                                 <x-input-label for="slug" :value="__('Slug')" />
-                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug', $learningPath->slug)" required />
+                                <x-text-input id="slug" name="slug" type="text" class="mt-1 block w-full" :value="old('slug', $learningPath->slug)" placeholder="{{ __('Leave blank to keep existing slug') }}" />
                                 <x-input-error class="mt-2" :messages="$errors->get('slug')" />
                             </div>
                         </div>
@@ -79,9 +79,22 @@
                         </div>
 
                         <div>
-                            <x-input-label for="thumbnail" :value="__('Thumbnail URL / Path')" />
-                            <x-text-input id="thumbnail" name="thumbnail" type="text" class="mt-1 block w-full" :value="old('thumbnail', $learningPath->thumbnail)" />
-                            <x-input-error class="mt-2" :messages="$errors->get('thumbnail')" />
+                            <x-input-label for="thumbnail_file" :value="__('Upload New Thumbnail')" />
+                            @if ($learningPath->thumbnail)
+                                <div class="my-2 flex items-center space-x-3">
+                                    <img src="{{ $learningPath->thumbnail }}" alt="{{ $learningPath->title }}" class="h-16 w-16 rounded object-cover border border-gray-200">
+                                    <span class="text-xs text-gray-500 break-all">{{ $learningPath->thumbnail }}</span>
+                                </div>
+                            @endif
+                            <input id="thumbnail_file" name="thumbnail_file" type="file" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                            <p class="mt-1 text-xs text-gray-500">{{ __('Supports JPG, PNG, WEBP, GIF up to 2MB. Uploading a new file will replace the current thumbnail.') }}</p>
+                            <x-input-error class="mt-2" :messages="$errors->get('thumbnail_file')" />
+
+                            <div class="mt-3">
+                                <x-input-label for="thumbnail" :value="__('Or Thumbnail URL / Path')" />
+                                <x-text-input id="thumbnail" name="thumbnail" type="text" class="mt-1 block w-full" :value="old('thumbnail', $learningPath->thumbnail)" />
+                                <x-input-error class="mt-2" :messages="$errors->get('thumbnail')" />
+                            </div>
                         </div>
 
                         <div>

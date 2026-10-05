@@ -46,4 +46,20 @@ class LearningPathPolicy
     {
         return $user->hasRole('admin') || ($user->can('learning_paths.delete') && $learningPath->created_by === $user->id);
     }
+
+    /**
+     * Determine whether the user can publish the learning path.
+     */
+    public function publish(User $user, LearningPath $learningPath): bool
+    {
+        return $this->update($user, $learningPath);
+    }
+
+    /**
+     * Determine whether the user can unpublish the learning path.
+     */
+    public function unpublish(User $user, LearningPath $learningPath): bool
+    {
+        return $this->update($user, $learningPath);
+    }
 }

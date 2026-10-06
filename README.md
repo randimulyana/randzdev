@@ -1,58 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Randz.dev — Personal Developer Portfolio & Programming Learning Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Randz.dev adalah platform web personal developer berbasis Laravel yang menggabungkan tiga fungsi utama:
+1. **Personal Developer Portfolio**: Showcase identitas, pengalaman, keahlian teknis, dan studi kasus project.
+2. **Programming Blog & Technical Documentation**: Artikel, catatan teknis, dan tutorial pemrograman.
+3. **Programming Learning Platform**: Kurikulum berstruktur dalam bentuk Learning Paths dan Lessons interaktif untuk pemula.
 
-## About Laravel
+Dibangun dengan prinsip:
+> **Build. Learn. Document. Share.**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tech Stack & Arsitektur
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Framework**: [Laravel 13](https://laravel.com) (PHP 8.3+)
+- **Architecture**: Server-rendered Laravel MVC Monolith
+- **Frontend**: Blade + [Tailwind CSS v4](https://tailwindcss.com) + Vanilla JavaScript + Alpine.js
+- **Asset Bundler**: [Vite](https://vitejs.dev)
+- **Database**: MySQL 8.0+ / MariaDB 10.5+
+- **Authentication**: Laravel Breeze
+- **Authorization**: [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) (Role-Based Access Control)
+- **Code Highlighter**: Highlight.js (Markdown code block highlighting)
+- **Testing**: [Pest PHP](https://pestphp.com) & PHPUnit
+- **Code Formatter**: Laravel Pint
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📋 Persyaratan Sistem (System Requirements)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **PHP**: `>= 8.3`
+  - Ekstensi wajib: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `hash`, `json`, `mbstring`, `openssl`, `pcre`, `pdo`, `pdo_mysql`, `session`, `tokenizer`, `xml`
+- **Database**: MySQL `>= 8.0` atau MariaDB `>= 10.5`
+- **Composer**: `>= 2.2`
+- **Node.js**: `>= 20.x` & **npm**: `>= 10.x`
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 🚀 Panduan Instalasi Lokal (Local Development)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Clone Repository
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <REPOSITORY_URL> randzdev
+cd randzdev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependency PHP
+```bash
+composer install
+```
 
-## Contributing
+### 3. Konfigurasi Environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+Sesuaikan konfigurasi database MySQL pada file `.env` lokal:
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=randzdev
+DB_USERNAME=randzdev
+DB_PASSWORD=secret
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Jalankan Database Migration & Seeding
+```bash
+# Jalankan migrasi tabel
+php artisan migrate
 
-## Code of Conduct
+# Seed role & permissions
+php artisan db:seed --class=RolePermissionSeeder
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# (Opsional) Buat akun admin development lokal
+# Pastikan ADMIN_PASSWORD terisi di .env terlebih dahulu
+php artisan db:seed --class=AdminUserSeeder
+```
 
-## Security Vulnerabilities
+### 5. Hubungkan Direktori Publik Storage
+```bash
+php artisan storage:link
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 6. Install Dependency Frontend & Kompilasi
+```bash
+npm install
+npm run build
+# Atau jalankan dev watcher:
+npm run dev
+```
 
-## License
+### 7. Jalankan Server Development
+```bash
+php artisan serve
+```
+Akses aplikasi melalui browser di `http://localhost:8000`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🧪 Testing & Code Quality
+
+Aplikasi dilengkapi test suite komprehensif (600+ tests) menggunakan Pest PHP.
+
+```bash
+# Menjalankan seluruh test suite
+php artisan test --compact
+
+# Menjalankan test tertentu
+php artisan test --filter=SecurityHardeningTest
+
+# Menjalankan linter & code formatter Pint
+vendor/bin/pint --format agent
+```
+
+---
+
+## 🚢 Panduan Deployment Produksi (Production Deployment)
+
+Dokumentasi lengkap mengenai arsitektur server, konfigurasi Nginx/Apache, virtual host, zero-downtime script, dan verifikasi pasca-deploy tersedia di:
+👉 **[DEPLOYMENT.md](DEPLOYMENT.md)**
+
+### Ringkasan Alur Deployment Cepat
+
+1. **Document Root**:
+   Wajib mengarah ke direktori `public/` (bukan root repository).
+2. **Environment Variables**:
+   ```dotenv
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://randz.dev
+   SESSION_SECURE_COOKIE=true
+   ```
+3. **Eksekusi Perintah Produksi**:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   npm ci --ignore-scripts && npm run build
+   php artisan migrate --force
+   php artisan db:seed --class=RolePermissionSeeder --force
+   php artisan storage:link
+   php artisan optimize
+   ```
+4. **Izin Berkas**:
+   Pastikan direktori `storage/` dan `bootstrap/cache/` memiliki izin tulis untuk web server (`chmod -R 775`).
+
+---
+
+## 🔒 Keamanan & Kebijakan Hak Akses
+
+- **Server-Side Authorization**: Seluruh operasi CRUD dan aksi publish/unpublish dilindungi oleh Spatie Permissions dan Laravel Policies (`PostPolicy`, `ProjectPolicy`, `LearningPathPolicy`, `LessonPolicy`, dll).
+- **IDOR Prevention**: Nested route lessons menggunakan scoped route model binding (`scoped()`).
+- **File Upload Protection**: Validasi MIME type ketat (`jpeg,png,jpg,webp,gif`), batas ukuran 2MB, dan perlindungan path traversal sanitization pada cleanup file lama.
+- **Rate Limiting**: Form kontak (`/contact`) dan login form dilindungi pembatasan request per menit.
+- **Production Guard**: `AdminUserSeeder` secara otomatis menolak dieksekusi di environment produksi demi mencegah kebocoran kredensial default.
+
+---
+
+## 📄 Lisensi
+
+Project ini dilisensikan di bawah [MIT License](LICENSE).

@@ -347,3 +347,85 @@ Lakukan pemeriksaan fungsionalitas berikut segera setelah deploy:
    - Coba submit berulang dalam 1 menit -> Middleware throttle harus aktif.
 8. **Logging**:
    - Periksa `storage/logs/laravel.log` -> Pastikan tidak ada unhandled exception atau error fatal.
+
+---
+
+## 9. Railway Deployment Guide (Aktual)
+
+Aplikasi Randz.dev telah di-deploy dan terkonfigurasi di [Railway](https://railway.com) menggunakan arsitektur dua service:
+
+```text
+Railway Project: randzdev
+├── randzdev-app  (Web Application Service — Laravel 13, FrankenPHP, PHP 8.3)
+└── MySQL         (Database Service — MySQL 9, Persistent Volume)
+```
+
+### A. Railway Service & Database Configuration
+- **Application Service**: `randzdev-app` (didukung Railpack yang mengotomatisasi instalasi PHP 8.3, ekstensi `pdo_mysql`, FrankenPHP, `composer install`, `npm run build`, `php artisan optimize`, dan `php artisan storage:link`).
+- **Database Service**: `MySQL` dengan volume persisten terpasang pada `/var/lib/mysql`.
+- **Database Connection Variables**:
+  - `DB_CONNECTION=mysql`
+  - `DB_HOST=${{MySQL.MYSQLHOST}}`
+  - `DB_PORT=${{MySQL.MYSQLPORT}}`
+  - `DB_DATABASE=${{MySQL.MYSQLDATABASE}}`
+  - `DB_USERNAME=${{MySQL.MYSQLUSER}}`
+  - `DB_PASSWORD=${{MySQL.MYSQLPASSWORD}}`
+
+### B. Environment Variables di Railway
+Konfigurasikan variabel environment pada service `randzdev-app`:
+- `APP_NAME=Randz.dev`
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=https://randzdev-app-production.up.railway.app` (atau custom domain Anda)
+- `APP_KEY=<production_app_key>`
+- `LOG_CHANNEL=stderr`
+- `LOG_STDERR_FORMATTER=\Monolog\Formatter\JsonFormatter`
+- `SESSION_SECURE_COOKIE=true`
+- `FILESYSTEM_DISK=public`
+- `SESSION_DRIVER=database`
+- `CACHE_STORE=database`
+- `QUEUE_CONNECTION=database`
+
+### C. Reverse Proxy & HTTPS (`trustProxies`)
+Pada `bootstrap/app.php`, middleware `trustProxies(at: '*')` diaktifkan agar Laravel mempercayai header `X-Forwarded-Proto: https` dan `X-Forwarded-Host` dari edge proxy Railway. Seluruh URL canonical, asset URL, dan sitemap secara otomatis menggunakan skema `https://`.
+
+### D. Healthcheck & Railway Configuration (`railway.json`)
+Healthcheck path Railway dikonfigurasi ke `/up`:
+```json
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "RAILPACK"
+  },
+  "deploy": {
+    "healthcheckPath": "/up",
+    "healthcheckTimeout": 100,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
+```
+
+### E. Database Migration & Initial Admin Setup
+1. **Migration Otomatis**: Railpack secara otomatis menjalankan migrasi (`php artisan migrate`) saat build/deploy.
+2. **Seeding Role & Permission**:
+   ```bash
+   railway ssh php artisan db:seed --class=RolePermissionSeeder --force
+   ```
+3. **Pembuatan Akun Admin Produksi**:
+   Jalankan Tinker via Railway SSH untuk membuat akun admin awal secara interaktif tanpa menyimpan password ke Git:
+   ```bash
+   railway ssh php artisan tinker --execute '
+   $user = \App\Models\User::firstOrCreate(
+       ["email" => "admin@randz.dev"],
+       ["name" => "Randi", "password" => \Illuminate\Support\Facades\Hash::make("<STRONG_ADMIN_PASSWORD>")]
+   );
+   $user->assignRole("admin");
+   echo "Admin ready: " . $user->email . PHP_EOL;
+   '
+   ```
+
+### F. Pertimbangan Storage & File Uploads (Storage Consideration)
+- Pada arsitektur container ephemeral Railway, berkas upload lokal pada `storage/app/public` tersimpan di dalam filesystem kontainer.
+- Saat kontainer di-redeploy atau diganti instance baru, berkas yang diunggah secara lokal melalui admin CMS akan di-reset ke kondisi build image awal kecuali direktori tersebut di-mount ke **Railway Volume** terpisah (misal mount path `/app/storage/app/public`), atau menggunakan **Cloud Object Storage** eksternal (seperti AWS S3, Cloudflare R2, MinIO, atau DigitalOcean Spaces) dengan driver `s3` pada `FILESYSTEM_DISK`.
+- Untuk keperluan jangka panjang konten dinamis, integrasi ke S3/R2 sangat direkomendasikan.

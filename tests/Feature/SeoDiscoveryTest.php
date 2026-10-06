@@ -4,6 +4,7 @@ use App\Models\LearningPath;
 use App\Models\Lesson;
 use App\Models\Post;
 use App\Models\Project;
+use Illuminate\Support\Facades\Schema;
 
 test('guest can access sitemap.xml with correct headers and valid XML', function () {
     $response = $this->get(route('sitemap'));
@@ -335,4 +336,81 @@ test('learning lesson contains valid Open Graph and Twitter metadata', function 
         ->toContain('name="twitter:title" content="Service Containers and Providers — Laravel Mastery"')
         ->toContain('name="twitter:description" content="Deep dive into IoC and binding services in Laravel."')
         ->toContain('name="twitter:image" content="https://example.com/images/path-thumb.jpg"');
+});
+
+test('projects index contains valid seo metadata and canonical url without noindex robots tag', function () {
+    $response = $this->get(route('projects.index'));
+
+    $response->assertOk();
+    $content = $response->getContent();
+
+    expect($content)->toContain('<meta name="description" content="')
+        ->toContain('<link rel="canonical" href="'.route('projects.index').'">')
+        ->not->toContain('name="robots" content="noindex');
+});
+
+test('blog index contains valid seo metadata and canonical url without noindex robots tag', function () {
+    $response = $this->get(route('blog.index'));
+
+    $response->assertOk();
+    $content = $response->getContent();
+
+    expect($content)->toContain('<meta name="description" content="')
+        ->toContain('<link rel="canonical" href="'.route('blog.index').'">')
+        ->not->toContain('name="robots" content="noindex');
+});
+
+test('search page contains valid seo metadata, canonical url, and noindex follow robots tag', function () {
+    $response = $this->get(route('search'));
+
+    $response->assertOk();
+    $content = $response->getContent();
+
+    expect($content)->toContain('<meta name="description" content="')
+        ->toContain('<link rel="canonical" href="'.route('search').'">')
+        ->toContain('<meta name="robots" content="noindex, follow">');
+});
+
+test('public listing cards render images with loading lazy', function () {
+    $project = Project::factory()->create([
+        'thumbnail' => 'https://example.com/project-thumb.jpg',
+        'status' => 'completed',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $post = Post::factory()->create([
+        'featured_image' => 'https://example.com/post-thumb.jpg',
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $path = LearningPath::factory()->create([
+        'thumbnail' => 'https://example.com/path-thumb.jpg',
+        'status' => 'published',
+        'published_at' => now()->subDay(),
+    ]);
+
+    $projectsResponse = $this->get(route('projects.index'));
+    $projectsResponse->assertOk();
+    expect($projectsResponse->getContent())->toContain('loading="lazy"');
+
+    $blogResponse = $this->get(route('blog.index'));
+    $blogResponse->assertOk();
+    expect($blogResponse->getContent())->toContain('loading="lazy"');
+
+    $learnResponse = $this->get(route('learn.index'));
+    $learnResponse->assertOk();
+    expect($learnResponse->getContent())->toContain('loading="lazy"');
+
+    $homeResponse = $this->get(route('home'));
+    $homeResponse->assertOk();
+    expect($homeResponse->getContent())->toContain('loading="lazy"');
+});
+
+test('content tables have status and order indexes in database schema', function () {
+    expect(Schema::hasIndex('projects', ['status']))->toBeTrue()
+        ->and(Schema::hasIndex('posts', ['status']))->toBeTrue()
+        ->and(Schema::hasIndex('learning_paths', ['status']))->toBeTrue()
+        ->and(Schema::hasIndex('lessons', ['status']))->toBeTrue()
+        ->and(Schema::hasIndex('lessons', ['order']))->toBeTrue();
 });

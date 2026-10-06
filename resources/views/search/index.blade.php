@@ -3,6 +3,16 @@
         {{ __('Search') }}
     </x-slot:title>
 
+    <x-slot:metaRobots>noindex, follow</x-slot:metaRobots>
+
+    <x-slot:metaDescription>
+        {{ __('Find articles, tutorials, topics, and portfolio projects across Randz.dev.') }}
+    </x-slot:metaDescription>
+
+    <x-slot:canonicalUrl>
+        {{ route('search') }}
+    </x-slot:canonicalUrl>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             {{-- Header Section --}}

@@ -36,6 +36,7 @@
                                 @if ($path->thumbnail)
                                     <img src="{{ $path->thumbnail }}"
                                          alt="{{ $path->title }}"
+                                         loading="lazy"
                                          class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-500 group-hover:from-indigo-100 transition duration-300">

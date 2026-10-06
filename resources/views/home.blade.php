@@ -106,7 +106,7 @@
                         <article class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
                             <a href="{{ route('projects.show', $project) }}" class="block relative aspect-video bg-gray-100 overflow-hidden group">
                                 @if ($project->thumbnail)
-                                    <img src="{{ $project->thumbnail }}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                    <img src="{{ $project->thumbnail }}" alt="{{ $project->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-400 group-hover:from-indigo-100 transition duration-300">
                                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,7 +188,7 @@
                         <article class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
                             <a href="{{ route('learn.show', $path) }}" class="block relative aspect-video bg-gray-100 overflow-hidden group">
                                 @if ($path->thumbnail)
-                                    <img src="{{ $path->thumbnail }}" alt="{{ $path->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                    <img src="{{ $path->thumbnail }}" alt="{{ $path->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-500 group-hover:from-indigo-100 transition duration-300">
                                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,7 +267,7 @@
                         <article class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
                             <a href="{{ route('blog.show', $post) }}" class="block relative aspect-video bg-gray-100 overflow-hidden group">
                                 @if ($post->featured_image)
-                                    <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                    <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-400 group-hover:from-indigo-100 transition duration-300">
                                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

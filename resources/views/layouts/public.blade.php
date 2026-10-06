@@ -7,6 +7,10 @@
 
         <title>{{ isset($title) ? $title . ' — ' . config('app.name', 'Randz.dev') : config('app.name', 'Randz.dev') . ' — Portfolio' }}</title>
 
+        @if (! empty($metaRobots))
+            <meta name="robots" content="{{ $metaRobots }}">
+        @endif
+
         @if (! empty($metaDescription))
             <meta name="description" content="{{ $metaDescription }}">
         @endif

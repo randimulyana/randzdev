@@ -3,6 +3,14 @@
         {{ __('Blog & Articles') }}
     </x-slot:title>
 
+    <x-slot:metaDescription>
+        {{ __('Insights, guides, tutorials, and engineering notes on modern software development.') }}
+    </x-slot:metaDescription>
+
+    <x-slot:canonicalUrl>
+        {{ route('blog.index') }}
+    </x-slot:canonicalUrl>
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             {{-- Header Section --}}
@@ -79,6 +87,7 @@
                                 @if ($post->featured_image)
                                     <img src="{{ $post->featured_image }}"
                                          alt="{{ $post->title }}"
+                                         loading="lazy"
                                          class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-slate-100 text-indigo-400 group-hover:from-indigo-100 transition duration-300">

@@ -203,6 +203,9 @@ class ProjectController extends Controller
         $storagePrefix = '/storage/';
         if (str_starts_with($url, $storagePrefix)) {
             $relativePath = substr($url, strlen($storagePrefix));
+            if (str_contains($relativePath, '..') || str_contains($relativePath, "\0")) {
+                return;
+            }
             if (str_starts_with($relativePath, 'projects/') && Storage::disk('public')->exists($relativePath)) {
                 Storage::disk('public')->delete($relativePath);
             }

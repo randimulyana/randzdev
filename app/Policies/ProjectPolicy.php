@@ -12,7 +12,7 @@ class ProjectPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('projects.view');
+        return $user->hasAnyRole(['admin', 'author']) && $user->can('projects.view');
     }
 
     /**
@@ -20,7 +20,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->can('projects.view');
+        return $user->hasAnyRole(['admin', 'author']) && $user->can('projects.view');
     }
 
     /**

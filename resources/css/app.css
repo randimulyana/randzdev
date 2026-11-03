@@ -2,6 +2,8 @@
 @import 'highlight.js/styles/atom-one-dark.css';
 @plugin '@tailwindcss/forms';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../views';
@@ -9,6 +11,15 @@
 @theme {
     --font-sans: 'Figtree', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Native UI (scrollbars, form controls, autofill) follows the active theme */
+:root {
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
 }
 
 /* Markdown Content Styling */
@@ -149,4 +160,56 @@
 .markdown-content th {
     background-color: #f9fafb;
     font-weight: 600;
+}
+
+/* Markdown Content Dark Styling */
+.dark .markdown-content h1 {
+    color: #f3f4f6;
+}
+
+.dark .markdown-content h2,
+.dark .markdown-content h3 {
+    color: #e5e7eb;
+}
+
+.dark .markdown-content h4 {
+    color: #d1d5db;
+}
+
+.dark .markdown-content blockquote {
+    color: #9ca3af;
+    background-color: #1e293b;
+    border-left-color: #818cf8;
+}
+
+.dark .markdown-content a {
+    color: #818cf8;
+}
+
+.dark .markdown-content a:hover {
+    color: #a5b4fc;
+}
+
+.dark .markdown-content strong {
+    color: #f9fafb;
+}
+
+.dark .markdown-content hr {
+    border-top: 1px solid #374151;
+}
+
+.dark .markdown-content :not(pre) > code {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+}
+
+.dark .markdown-content th,
+.dark .markdown-content td {
+    border-color: #374151;
+}
+
+.dark .markdown-content th {
+    background-color: #1e293b;
+    color: #f3f4f6;
 }

@@ -17,10 +17,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             {{-- Header Section --}}
             <div class="text-center max-w-3xl mx-auto space-y-4">
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                     {{ __('Search') }}
                 </h1>
-                <p class="text-base sm:text-lg text-gray-600">
+                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300">
                     {{ __('Find articles, tutorials, topics, and portfolio projects across Randz.dev.') }}
                 </p>
 
@@ -32,8 +32,8 @@
                                value="{{ $query }}"
                                placeholder="{{ __('Search articles and projects...') }}"
                                aria-label="{{ __('Search input') }}"
-                               class="w-full pl-11 pr-24 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
-                        <div class="absolute left-3.5 text-gray-400 pointer-events-none">
+                               class="w-full pl-11 pr-24 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-xl shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                        <div class="absolute left-3.5 text-gray-400 dark:text-gray-500 pointer-events-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
@@ -48,30 +48,30 @@
 
             {{-- Initial Search State --}}
             @if ($query === '')
-                <div class="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm max-w-2xl mx-auto px-6">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center">
+                <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm max-w-2xl mx-auto px-6">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ __('Search articles and projects') }}</h2>
-                    <p class="text-sm text-gray-500 max-w-md mx-auto">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">{{ __('Search articles and projects') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
                         {{ __('Enter a search keyword above to find published articles, tutorials, engineering guides, and portfolio projects.') }}
                     </p>
                 </div>
 
             {{-- Empty Results State --}}
             @elseif ($posts->total() === 0 && $projects->total() === 0)
-                <div class="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm max-w-2xl mx-auto px-6">
-                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center">
+                <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm max-w-2xl mx-auto px-6">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 rounded-full flex items-center justify-center">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h2 class="text-lg font-semibold text-gray-900 mb-2">
-                        {{ __('No results found for') }} "<span class="text-indigo-600 font-bold">{{ $query }}</span>"
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        {{ __('No results found for') }} "<span class="text-indigo-600 dark:text-indigo-400 font-bold">{{ $query }}</span>"
                     </h2>
-                    <p class="text-sm text-gray-500 max-w-md mx-auto">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 max-w-md mx-auto">
                         {{ __('We could not find any matching articles or projects. Please try different keywords or check for spelling errors.') }}
                     </p>
                 </div>
@@ -82,10 +82,10 @@
                     {{-- Articles Section --}}
                     @if ($posts->total() > 0)
                         <section class="space-y-6">
-                            <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+                            <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">{{ __('Articles') }}</h2>
-                                    <p class="text-xs text-gray-500 mt-0.5">
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Articles') }}</h2>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                         {{ trans_choice(':count article found|:count articles found', $posts->total(), ['count' => $posts->total()]) }}
                                     </p>
                                 </div>
@@ -93,11 +93,11 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 @foreach ($posts as $post)
-                                    <article class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+                                    <article class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                                         <div class="p-6 space-y-3">
-                                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                                 @if ($post->category)
-                                                    <span class="font-semibold text-indigo-600 uppercase tracking-wider">
+                                                    <span class="font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                                                         {{ $post->category->name }}
                                                     </span>
                                                 @else
@@ -111,18 +111,18 @@
                                                 @endif
                                             </div>
 
-                                            <h3 class="text-lg font-bold text-gray-900 hover:text-indigo-600 transition">
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">
                                                 <a href="{{ route('blog.show', $post) }}">
                                                     {{ $post->title }}
                                                 </a>
                                             </h3>
 
                                             @if ($post->excerpt)
-                                                <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                                <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
                                                     {{ $post->excerpt }}
                                                 </p>
                                             @elseif ($post->content)
-                                                <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                                <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
                                                     {{ Str::limit(strip_tags($post->content), 120) }}
                                                 </p>
                                             @endif
@@ -130,9 +130,9 @@
 
                                         <div class="px-6 pb-6 pt-0 space-y-4">
                                             @if ($post->tags->isNotEmpty())
-                                                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100">
+                                                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-700">
                                                     @foreach ($post->tags as $tag)
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                                                             #{{ $tag->name }}
                                                         </span>
                                                     @endforeach
@@ -141,7 +141,7 @@
 
                                             <div class="pt-2 flex justify-end">
                                                 <a href="{{ route('blog.show', $post) }}"
-                                                   class="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                                                   class="inline-flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition">
                                                     <span>{{ __('Read Article') }}</span>
                                                     <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -164,10 +164,10 @@
                     {{-- Projects Section --}}
                     @if ($projects->total() > 0)
                         <section class="space-y-6">
-                            <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+                            <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-900">{{ __('Projects') }}</h2>
-                                    <p class="text-xs text-gray-500 mt-0.5">
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">{{ __('Projects') }}</h2>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                                         {{ trans_choice(':count project found|:count projects found', $projects->total(), ['count' => $projects->total()]) }}
                                     </p>
                                 </div>
@@ -175,11 +175,11 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 @foreach ($projects as $project)
-                                    <article class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
+                                    <article class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
                                         <div class="p-6 space-y-3">
-                                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                                 @if ($project->category)
-                                                    <span class="font-semibold text-indigo-600 uppercase tracking-wider">
+                                                    <span class="font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
                                                         {{ $project->category->name }}
                                                     </span>
                                                 @else
@@ -187,24 +187,24 @@
                                                 @endif
 
                                                 @if ($project->status)
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                                                         {{ ucfirst(str_replace('_', ' ', $project->status)) }}
                                                     </span>
                                                 @endif
                                             </div>
 
-                                            <h3 class="text-lg font-bold text-gray-900 hover:text-indigo-600 transition">
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">
                                                 <a href="{{ route('projects.show', $project) }}">
                                                     {{ $project->title }}
                                                 </a>
                                             </h3>
 
                                             @if ($project->short_description)
-                                                <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                                <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
                                                     {{ $project->short_description }}
                                                 </p>
                                             @elseif ($project->description)
-                                                <p class="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                                                <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 leading-relaxed">
                                                     {{ Str::limit(strip_tags($project->description), 120) }}
                                                 </p>
                                             @endif
@@ -212,9 +212,9 @@
 
                                         <div class="px-6 pb-6 pt-0 space-y-4">
                                             @if ($project->technologies->isNotEmpty())
-                                                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100">
+                                                <div class="flex flex-wrap gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-700">
                                                     @foreach ($project->technologies as $tech)
-                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300">
                                                             {{ $tech->name }}
                                                         </span>
                                                     @endforeach
@@ -223,7 +223,7 @@
 
                                             <div class="pt-2 flex justify-end">
                                                 <a href="{{ route('projects.show', $project) }}"
-                                                   class="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                                                   class="inline-flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition">
                                                     <span>{{ __('View Project') }}</span>
                                                     <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

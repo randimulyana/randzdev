@@ -22,7 +22,7 @@
             <!-- Back Navigation -->
             <div>
                 <a href="{{ route('learn.index') }}"
-                   class="inline-flex items-center text-sm font-semibold text-gray-600 hover:text-indigo-600 transition group">
+                   class="inline-flex items-center text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition group">
                     <svg class="mr-2 w-4 h-4 transform group-hover:-translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -31,9 +31,9 @@
             </div>
 
             <!-- Learning Path Header Card -->
-            <header class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+            <header class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
                 @if ($learningPath->thumbnail)
-                    <div class="aspect-video w-full bg-gray-100 overflow-hidden">
+                    <div class="aspect-video w-full bg-gray-100 dark:bg-gray-900 overflow-hidden">
                         <img src="{{ $learningPath->thumbnail }}" alt="{{ $learningPath->title }}" class="w-full h-full object-cover">
                     </div>
                 @endif
@@ -43,10 +43,10 @@
                     <div class="flex flex-wrap items-center gap-2">
                         @php
                             $difficultyClasses = match ($learningPath->difficulty) {
-                                'beginner' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                'intermediate' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                'advanced' => 'bg-purple-50 text-purple-700 border-purple-200',
-                                default => 'bg-gray-50 text-gray-700 border-gray-200',
+                                'beginner' => 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+                                'intermediate' => 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+                                'advanced' => 'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+                                default => 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700',
                             };
                         @endphp
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border {{ $difficultyClasses }}">
@@ -54,16 +54,16 @@
                         </span>
 
                         @if ($learningPath->estimated_duration)
-                            <span class="inline-flex items-center text-xs font-medium text-gray-500">
-                                <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span class="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                                <svg class="w-3.5 h-3.5 mr-1 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 {{ $learningPath->estimated_duration }}
                             </span>
                         @endif
 
-                        <span class="inline-flex items-center text-xs font-medium text-gray-500">
-                            <svg class="w-3.5 h-3.5 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span class="inline-flex items-center text-xs font-medium text-gray-500 dark:text-gray-400">
+                            <svg class="w-3.5 h-3.5 mr-1 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                             {{ $learningPath->lessons->count() }} {{ \Illuminate\Support\Str::plural(__('lesson'), $learningPath->lessons->count()) }}
@@ -72,12 +72,12 @@
 
                     <!-- Title & Description -->
                     <div class="space-y-4">
-                        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight leading-tight">
                             {{ $learningPath->title }}
                         </h1>
 
                         @if ($learningPath->description)
-                            <p class="text-base sm:text-lg text-gray-600 leading-relaxed">
+                            <p class="text-base sm:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
                                 {{ $learningPath->description }}
                             </p>
                         @endif
@@ -94,7 +94,7 @@
                                 </svg>
                             </a>
                         @else
-                            <span class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 text-gray-500 text-sm font-medium">
+                            <span class="inline-flex items-center px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm font-medium">
                                 {{ __('Curriculum in preparation — check back soon') }}
                             </span>
                         @endif
@@ -105,10 +105,10 @@
             <!-- Curriculum Section -->
             <section class="space-y-6">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 tracking-tight">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
                         {{ __('Curriculum') }}
                     </h2>
-                    <p class="text-sm text-gray-500 mt-1">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {{ __('Lessons are organized sequentially. Follow along in order for the best learning experience.') }}
                     </p>
                 </div>
@@ -116,20 +116,20 @@
                 @if ($learningPath->lessons->isNotEmpty())
                     <div class="space-y-3">
                         @foreach ($learningPath->lessons as $lessonItem)
-                            <article class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:border-indigo-300 transition flex items-start gap-4">
-                                <span class="flex-shrink-0 w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 font-bold flex items-center justify-center text-sm">
+                            <article class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:border-indigo-300 dark:hover:border-indigo-500 transition flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-sm">
                                     {{ $loop->iteration }}
                                 </span>
 
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 hover:text-indigo-600 transition">
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">
                                         <a href="{{ route('learn.lesson', [$learningPath, $lessonItem]) }}">
                                             {{ $lessonItem->title }}
                                         </a>
                                     </h3>
 
                                     @if ($lessonItem->excerpt)
-                                        <p class="text-sm text-gray-600 mt-1 leading-relaxed">
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 leading-relaxed">
                                             {{ $lessonItem->excerpt }}
                                         </p>
                                     @endif
@@ -137,7 +137,7 @@
 
                                 <div class="flex-shrink-0 self-center">
                                     <a href="{{ route('learn.lesson', [$learningPath, $lessonItem]) }}"
-                                       class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition">
+                                       class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition">
                                         <span>{{ __('Start') }}</span>
                                         <svg class="ml-1 w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -149,13 +149,13 @@
                     </div>
                 @else
                     <!-- Empty Curriculum State -->
-                    <div class="text-center py-12 bg-white rounded-xl border border-gray-200 p-8 space-y-3">
+                    <div class="text-center py-12 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 space-y-3">
                         <svg class="mx-auto h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                        <h3 class="text-base font-semibold text-gray-900">{{ __('No lessons published yet') }}</h3>
-                        <p class="text-sm text-gray-500">
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">{{ __('No lessons published yet') }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
                             {{ __('There are no published lessons in this learning path yet. Please check back later.') }}
                         </p>
                     </div>
